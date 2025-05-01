@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+:root {
+    --vh: 100%;
+}
+
+body{
+    @apply font-sans bg-ash-50
+}
+
+/*loader*/
+.loader {
+    width: 120px;
+    height: 20px;
+    background: linear-gradient(90deg, #000 50%, #ddd 50%);
+    background-size: 200% 100%;
+    animation: l1 1.3s infinite linear;
+}
+
+@keyframes l1 {
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari and Edge */
+}
+
+
+/*for ant otp*/
+.ant-otp, input{
+    border-radius: 5px !important;
+    border-color: #D8D8D9;
+}
+
+input[type="search"]:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important; /* Removes any shadow */
+}
+
+/* global styles FOT OTP*/
+/* Tailwind-like styling for ant-otp-input */
+.ant-otp-input {
+    width: 56px;
+    height: 56px;
+    text-align: center;
+    font-size: 1.25rem; /* text-xl */
+    border-radius: 0.5rem; /* rounded-md */
+    border: 1px solid #D8D8D9;
+    transition: all 0.2s;
+}
+
+.ant-otp-input:focus {
+    border-color: #3b82f6; /* Tailwind's blue-500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* ring-blue-500 */
+}
+
+.ant-otp {
+    gap: 0.75rem; /* gap-3 */
+    display: flex;
+    justify-content: center;
+}
+
+/*Break page*/
+@media print {
+    .page-break {
+        page-break-before: always; /* or use page-break-after depending on context */
+        break-before: always; /* modern version */
+    }
+}

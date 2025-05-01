@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ESNext",
+    "types": ["vite/client"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "./",
+    "paths": {
+      "configs":[ "src/configs"],
+      "templates":[ "src/templates"],
+      "components":[ "src/components"],
+      "constant":[ "src/constants"],
+      "assets":[ "src/assets"],
+      "context":[ "src/context"],
+      "hooks":[ "src/hooks"],
+      "interfaces":[ "src/interfaces"],
+      "modules":[ "src/modules"],
+      "routes":[ "src/routes"],
+      "services":[ "src/services"],
+      "utils":[ "src/utils"],
+      "secrets":[ "./secrets.json"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.tsx", "**/*.spec.tx"],
+}
