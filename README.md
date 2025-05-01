@@ -4,6 +4,11 @@
 ### Available Scripts 💻
 
 ```js
+  "npm install"
+:
+Install
+all
+Dependencies
   "npm run dev": Starts the development server
   "npm run build": Builds the app for production
   "npm run test": Launches the test runner

@@ -1,19 +1,19 @@
+import { ApiUrl, PageLinks } from "constant";
+import { UserType } from "interfaces";
 import React, { createContext, useContext, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { Api } from "services";
+import { setAccessToken, setRefreshToken } from "utils";
 import {
   AppReducerActionEnum,
   IAppContext,
   IAppState,
 } from "./context.interface";
-import { Api } from "services";
-import { ApiUrl, PageLinks } from "constant";
-import { setAccessToken, setRefreshToken } from "utils";
-import { useNavigate } from "react-router-dom";
-import { UserType } from "interfaces";
+
 const InitialState: IAppState = {
   isLoading: false,
   isAuthenticating: true,
   isAuthenticated: false,
-  showWalletBalance: false,
   isError: false,
   error: null,
   isSuccess: false,
@@ -27,7 +27,6 @@ const InitialState: IAppState = {
 const AppStateContext = createContext<IAppContext>({
   ...InitialState,
   handler: {
-    setShowWalletBalance(state) {},
     setAuthenticated(state) {},
     setAuthenticating(state) {},
     setLoading(state) {},
@@ -49,12 +48,6 @@ function AppContextProvider({ children }) {
   const Handlers = {
     setLoading: (isLoading: boolean) => {
       dispatch({ type: AppReducerActionEnum.SET_LOADING, payload: isLoading });
-    },
-    setShowWalletBalance: (status: boolean) => {
-      dispatch({
-        type: AppReducerActionEnum.SET_SHOW_WALLET_BALANCE,
-        payload: status,
-      });
     },
 
     setAuthenticating: (isAuthenticating: boolean) => {
@@ -160,8 +153,6 @@ const reducer = (
       return { ...state, isLoading: action.payload };
     case AppReducerActionEnum.SET_AUTHENTICATING:
       return { ...state, isAuthenticating: action.payload };
-    case AppReducerActionEnum.SET_SHOW_WALLET_BALANCE:
-      return { ...state, showWalletBalance: action.payload };
     case AppReducerActionEnum.SET_AUTHENTICATED:
       return { ...state, isAuthenticated: action.payload };
     case AppReducerActionEnum.SET_ERROR:

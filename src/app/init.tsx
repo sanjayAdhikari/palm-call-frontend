@@ -1,13 +1,9 @@
 import { message } from "antd";
 import { MyLoader } from "components";
-import {
-  OptionContext,
-  useAppContext,
-} from "context";
+import { useAppContext } from "context";
 import { useAuthorization } from "hooks";
-import { UserType } from "interfaces";
-import React, { useContext, useEffect } from "react";
-import { getAccessToken, getRefreshToken } from "utils";
+import React, { useEffect } from "react";
+import { getAccessToken } from "utils";
 
 function Init({ children }) {
   const {
@@ -17,19 +13,10 @@ function Init({ children }) {
     handler: { getCurrentHandler, setAuthenticating, getCountHandler },
   } = useAppContext();
   const { currentRole } = useAuthorization();
-  const {
-    handlers: {
-      getDeliveryTypeOptions,
-      getBadgeOptions,
-      getVendorOptions,
-      getCouponOptions,
-      getCommodityOptions,
-      getDeliveryPartnerOptions,
-    },
-  } = useContext(OptionContext);
+
   useEffect(() => {
     (async () => {
-      if (getAccessToken() && getRefreshToken()) {
+      if (getAccessToken()) {
         await getCurrentHandler();
       } else {
         setAuthenticating(false);

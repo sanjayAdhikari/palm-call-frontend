@@ -17,9 +17,7 @@ function DashboardPage() {
       <div className={"flex flex-col"}>
         <div className={"flex items-center justify-between"}>
           <div className={"flex items-center gap-4"}>
-            <div className={" text-lg"}>
-              Hi, <span className={"font-bold"}>{userDetails?.name}</span>
-            </div>
+            <div className={"font-bold text-lg"}>Chats</div>
           </div>
           <div
             onClick={() => navigate(PageLinks.notification.list)}

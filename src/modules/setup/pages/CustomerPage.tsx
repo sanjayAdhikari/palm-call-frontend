@@ -1,13 +1,18 @@
 import { Tag } from "antd";
 import { MyButton, MyTable, PageTemplate, UserProfileCard } from "components";
-import { CustomerContext } from "context";
-import { useQueryParams } from "hooks";
+import { PageLinks } from "constant";
+import { CustomerContext, useAppContext } from "context";
+import { useAuthorization, useQueryParams } from "hooks";
 import { AppIconType, ITableColumns, IUser } from "interfaces";
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSerialNumber } from "utils";
+import { getIconsHandler, getSerialNumber } from "utils";
 
 function CustomerPage() {
+  const { userDetails } = useAuthorization();
+  const NotificationIcon = getIconsHandler(AppIconType.NOTIFICATION);
+  const { count } = useAppContext();
+
   const { isLoading, lists, getListHandler, currentPage } =
     useContext(CustomerContext);
   const { isActiveList } = useQueryParams();
@@ -80,19 +85,41 @@ function CustomerPage() {
     },
   ];
   return (
-    <PageTemplate backLink={getResponsiveBackLink()} title={"Customers"}>
-      <MyTable
-        isLoading={isLoading}
-        columns={TableColumns}
-        data={lists?.docs}
-        pagination={{
-          currentPage: currentPage,
-          onChange: async (page) => {
-            await fetchHandler(page);
-          },
-          totalDocs: lists?.totalDocs,
-        }}
-      />
+    <PageTemplate backLink={PageLinks.dashboard.list}>
+      <div className={"flex flex-col"}>
+        <div className={"mb-10 flex items-center justify-between"}>
+          <div className={"flex items-center gap-4"}>
+            <div className={"font-bold text-lg"}>Customers</div>
+          </div>
+          <div
+            onClick={() => navigate(PageLinks.notification.list)}
+            className={
+              "relative bg-gray-100 p-2 rounded-full cursor-pointer hover:bg-gray-50"
+            }
+          >
+            <NotificationIcon className={"text-[20px]"} />
+            {count?.notificationCount > 0 && (
+              <div
+                className={
+                  "absolute right-2 top-2 bg-red-600 h-3 w-3 rounded-full border border-white"
+                }
+              ></div>
+            )}
+          </div>
+        </div>
+        <MyTable
+          isLoading={isLoading}
+          columns={TableColumns}
+          data={lists?.docs}
+          pagination={{
+            currentPage: currentPage,
+            onChange: async (page) => {
+              await fetchHandler(page);
+            },
+            totalDocs: lists?.totalDocs,
+          }}
+        />
+      </div>
     </PageTemplate>
   );
 }

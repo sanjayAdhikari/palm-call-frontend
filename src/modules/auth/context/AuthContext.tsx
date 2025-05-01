@@ -1,21 +1,17 @@
-import React, { createContext } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ICallbackFunction } from "interfaces";
-import { Api } from "services";
-import { useAppContext } from "context";
 import { ApiUrl } from "constant";
-import { setAccessToken, setRefreshToken } from "utils";
+import { useAppContext } from "context";
+import { ICallbackFunction } from "interfaces";
+import React, { createContext } from "react";
+import { Outlet } from "react-router-dom";
+import { Api } from "services";
+import { setAccessToken } from "utils";
 
 interface AuthContext {
   loginHandler(payload: any, cb: ICallbackFunction): Promise<void>;
-  googleSignInHandler(payload: any, cb: ICallbackFunction): Promise<void>;
-  validateOTPHandler(payload: any, cb: ICallbackFunction): Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContext>({
   async loginHandler(payload, cb) {},
-  async validateOTPHandler(payload, cb) {},
-  async googleSignInHandler(payload, cb) {},
 });
 function AuthContextProvider() {
   const {
@@ -26,7 +22,6 @@ function AuthContextProvider() {
     async loginHandler(payload: any, cb: ICallbackFunction) {
       try {
         setLoading(true);
-        console.log('payload', payload)
         const res = await postApi(ApiUrl.auth.post_login, payload);
         setAccessToken(res?.data?.accessToken);
         // setRefreshToken(res?.data?.refreshToken);
