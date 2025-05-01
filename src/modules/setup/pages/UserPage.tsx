@@ -1,8 +1,8 @@
-import React, { useContext, useEffect } from "react";
 import { MyTable, PageTemplate, UserProfileCard } from "components";
-import { IAdminUser, ITableColumns } from "interfaces";
-import { UserContext } from "../context";
 import { useQueryParams } from "hooks";
+import { IAdminUser, ITableColumns } from "interfaces";
+import React, { useContext, useEffect } from "react";
+import { UserContext } from "../context";
 
 function UserPage() {
   const { isLoading, lists, getListHandler } = useContext(UserContext);

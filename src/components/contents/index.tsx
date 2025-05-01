@@ -1,23 +1,17 @@
-import MyFormSubmitButton from "./MyFormSubmitButton";
-import ViewFile from "./ViewFile";
-import PageTransition from "./PageTransition";
-import Wallet from "./Wallet";
-import LoadingAnimation from "./LoadingAnimation";
-import UserProfileCard from "./UserProfileCard";
+import EditUserProfile from "./EditUserProfile";
 import EmptyMessageComponent from "./EmptyMessageComponent";
 import FilterComponent from "./FilterComponent";
-import EditUserProfile from "./EditUserProfile";
+import LoadingAnimation from "./LoadingAnimation";
+import MyFormSubmitButton from "./MyFormSubmitButton";
+import PageTransition from "./PageTransition";
+import UserProfileCard from "./UserProfileCard";
+import ViewFile from "./ViewFile";
 import NavProfileContent from "./NavProfileContent";
-import KYCDetails from "./KYCDetails";
-import TransactionTableColumn from "./TransactionTableColumn";
-import VendorDetails from "./VendorDetails";
 
 export * from "./Token";
 export {
-  VendorDetails,
   FilterComponent,
   EmptyMessageComponent,
-  Wallet,
   MyFormSubmitButton,
   ViewFile,
   PageTransition,
@@ -25,6 +19,4 @@ export {
   UserProfileCard,
   EditUserProfile,
   NavProfileContent,
-  KYCDetails,
-  TransactionTableColumn,
 };

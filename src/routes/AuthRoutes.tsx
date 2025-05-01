@@ -1,3 +1,7 @@
+import { NotFoundComponent } from "components";
+import { PageLinks } from "constant";
+import { useAppContext } from "context";
+import { AnimatePresence } from "framer-motion";
 import React, { useEffect } from "react";
 import {
   Navigate,
@@ -8,19 +12,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import {
-  SetupRoute,
-  KYCRoute,
-  DashboardRoute,
-  AuthenticationRoute,
-  VendorRoute,
-  OrderRoute,
-  WalletRoute,
-} from "../modules";
-import { useAppContext } from "context";
-import { PageLinks } from "constant";
-import { NotFoundComponent } from "components";
-import { AnimatePresence } from "framer-motion";
+import { AuthenticationRoute, DashboardRoute, SetupRoute } from "../modules";
 
 export default function AuthRoute() {
   const location = useLocation();
@@ -33,10 +25,6 @@ export default function AuthRoute() {
         <Route path="/" element={<PrivateRouteComponent />}>
           {SetupRoute()}
           {DashboardRoute()}
-          {KYCRoute()}
-          {OrderRoute()}
-          {VendorRoute()}
-          {WalletRoute()}
         </Route>
         <Route path={"*"} element={<NotFoundComponent />} />
       </Routes>
@@ -47,9 +35,8 @@ export default function AuthRoute() {
 function PrivateRouteComponent() {
   const { isAuthenticated, isAuthenticating } = useAppContext();
   const { pathname } = useLocation();
-  const waybill = pathname.includes(PageLinks.activity.waybillDetails);
 
-  const canAccess = waybill || isAuthenticated;
+  const canAccess = isAuthenticated;
   if (isAuthenticating) return <></>;
   return canAccess ? (
     <Outlet />

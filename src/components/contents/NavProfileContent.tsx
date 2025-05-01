@@ -55,7 +55,7 @@ function NavProfileContent({ showMoreNavLink }: { showMoreNavLink?: boolean }) {
         )}
         <div className={"flex flex-col items-center"}>
           <span className={"text-xl font-medium"}>
-            {userDetails?.name?.first || ""} {userDetails?.name?.last || ""}
+            {userDetails?.name ?? ""}
           </span>
           <span className={"text-sm text-gray-500"}>{userDetails?.email}</span>
           <div

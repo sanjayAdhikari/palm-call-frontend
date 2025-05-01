@@ -6,12 +6,11 @@ import ViewFile from "./ViewFile";
 export default function UserProfileCard({
   name,
   profile,
-  rating,
   title,
   hideProfile,
   textClassName,
 }: {
-  name: { first?: string; last?: string };
+  name: string;
   profile?: string;
   rating?: number;
   textClassName?: string;
@@ -21,7 +20,7 @@ export default function UserProfileCard({
 }) {
   const [errorOnLoadingImage, setErrorLoadingImage] = useState(false);
 
-  const fullName = `${name?.first || ""} ${name?.last || ""}`.trim();
+  const fullName = name.trim();
 
   return (
     <div className=" flex items-center space-x-3">
@@ -37,10 +36,9 @@ export default function UserProfileCard({
       )}
       <div className={"flex flex-col"}>
         <span className={`text-base font-medium ${textClassName}`}>
-          {name?.first || ""} {name?.last || ""}
+          {fullName}
         </span>
         {title && <span className={"text-xs text-ash-500"}>{title}</span>}
-        {rating && <Rate className={"text-[12px]"} allowHalf value={rating} />}
       </div>
     </div>
   );

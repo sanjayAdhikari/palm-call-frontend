@@ -1,15 +1,13 @@
-import React, { useContext, useEffect } from "react";
+import { message } from "antd";
+import { MyLoader } from "components";
 import {
-  ConsigneeContext,
   OptionContext,
   useAppContext,
-  WalletContext,
 } from "context";
-import { MyLoader } from "components";
-import { message } from "antd";
-import { getAccessToken, getRefreshToken } from "utils";
 import { useAuthorization } from "hooks";
 import { UserType } from "interfaces";
+import React, { useContext, useEffect } from "react";
+import { getAccessToken, getRefreshToken } from "utils";
 
 function Init({ children }) {
   const {
@@ -29,8 +27,6 @@ function Init({ children }) {
       getDeliveryPartnerOptions,
     },
   } = useContext(OptionContext);
-  const { getListHandler: getConsigneeHandler } = useContext(ConsigneeContext);
-  const { getMyWalletHandler } = useContext(WalletContext);
   useEffect(() => {
     (async () => {
       if (getAccessToken() && getRefreshToken()) {
@@ -44,22 +40,10 @@ function Init({ children }) {
   useEffect(() => {
     (async () => {
       if (!isAuthenticated) return;
-      const isAdmin = currentRole === UserType.HYRE;
-      const isUser = currentRole === UserType.USER;
-      const isCargo = currentRole === UserType.INTERNATIONAL_CARGO_VENDOR;
       await Promise.all([
-        ...(isAdmin
-          ? [getBadgeOptions(), getVendorOptions(), getDeliveryTypeOptions()]
-          : isAdmin || isCargo
-            ? [getDeliveryPartnerOptions(), getDeliveryTypeOptions()]
-            : isUser
-              ? [getConsigneeHandler()]
-              : []),
-
-        getCommodityOptions(),
-        getCouponOptions(),
-        getCountHandler(),
-        getMyWalletHandler(),
+        // getCommodityOptions(),
+        // getCouponOptions(),
+        // getCountHandler(),
       ]);
     })();
   }, [isAuthenticated]);
@@ -72,6 +56,7 @@ function Init({ children }) {
     </>
   );
 }
+
 const MessagePopUp = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const {

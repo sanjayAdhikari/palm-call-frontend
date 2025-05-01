@@ -1,17 +1,5 @@
-import SetupRoute from "./setup";
-import KYCRoute from "./kyc";
-import DashboardRoute from "./dashboard";
 import AuthenticationRoute from "./auth";
-import OrderRoute from "./order";
-import VendorRoute from "./vendor";
-import WalletRoute from "./wallet";
+import DashboardRoute from "./dashboard";
+import SetupRoute from "./setup";
 
-export {
-  OrderRoute,
-  SetupRoute,
-  KYCRoute,
-  DashboardRoute,
-  AuthenticationRoute,
-  VendorRoute,
-  WalletRoute,
-};
+export { SetupRoute, DashboardRoute, AuthenticationRoute };

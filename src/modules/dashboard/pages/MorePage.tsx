@@ -1,7 +1,7 @@
-import React from "react";
-import { PageTemplate, NavProfileContent } from "components";
+import { NavProfileContent, PageTemplate } from "components";
 
 import { PageLinks } from "constant";
+import React from "react";
 
 function MorePage() {
   return (

@@ -1,16 +1,11 @@
 import { ParamsNames, QueryNames, UserType } from "interfaces";
 
 export const PageLinks = {
-  users: {
-    list: "/setup/users",
-  },
   customers: {
     list: "/customers",
   },
   dashboard: {
     list: "/dashboard",
-    userProfile: (userType: UserType, id: string) =>
-      `/user/profile/${userType}/${id}`,
     more: "/more",
   },
   notification: {

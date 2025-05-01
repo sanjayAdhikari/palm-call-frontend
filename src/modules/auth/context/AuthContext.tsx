@@ -21,7 +21,7 @@ function AuthContextProvider() {
   const {
     handler: { setLoading, setError, getCurrentHandler },
   } = useAppContext();
-  const { postApi, putApi, getApi } = Api();
+  const { postApi } = Api();
   const Handlers = {
     async loginHandler(payload: any, cb: ICallbackFunction) {
       try {
@@ -34,55 +34,6 @@ function AuthContextProvider() {
         if (typeof cb.onSuccess === "function") {
           await cb.onSuccess(res?.data);
         }
-      } catch (err) {
-        let message = err?.message;
-        if (err?.data?.length > 0) {
-          message = err?.data?.join(", ");
-        }
-        setError(message);
-
-        if (typeof cb.onError === "function") {
-          await cb.onError(err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    },
-    async validateOTPHandler(payload: any, cb: ICallbackFunction) {
-      try {
-        setLoading(true);
-        const res = await putApi(ApiUrl.auth.put_validateOTP, payload);
-        setAccessToken(res?.data?.accessToken);
-        setRefreshToken(res?.data?.refreshToken);
-        await getCurrentHandler();
-        if (typeof cb.onSuccess === "function") {
-          await cb.onSuccess(res?.data);
-        }
-      } catch (err: any) {
-        let message = "Something went wrong.";
-        if (Array.isArray(err?.data) && err.data.length > 0) {
-          message = err.data.join(", ");
-        } else if (typeof err?.message === "string") {
-          message = err.message;
-        }
-
-        setError(message);
-
-        if (typeof cb.onError === "function") {
-          await cb.onError(err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    },
-    async googleSignInHandler(payload: any, cb: ICallbackFunction) {
-      try {
-        setLoading(true);
-        const res = await getApi(
-          ApiUrl.auth.get_googleLogin(payload?.userType),
-          payload,
-        );
-        window.location.replace(res?.data);
       } catch (err) {
         let message = err?.message;
         if (err?.data?.length > 0) {

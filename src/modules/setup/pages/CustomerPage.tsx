@@ -1,12 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import { Tag } from "antd";
 import { MyButton, MyTable, PageTemplate, UserProfileCard } from "components";
-import { AppIconType, ITableColumns, IUser, UserType } from "interfaces";
 import { CustomerContext } from "context";
 import { useQueryParams } from "hooks";
-import { Tag } from "antd";
-import { getSerialNumber } from "utils";
+import { AppIconType, ITableColumns, IUser } from "interfaces";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { PageLinks } from "constant";
+import { getSerialNumber } from "utils";
 
 function CustomerPage() {
   const { isLoading, lists, getListHandler, currentPage } =
@@ -37,10 +36,7 @@ function CustomerPage() {
       title: "Name",
       render: (value, record) => {
         return (
-          <UserProfileCard
-            profile={record?.profileImage}
-            name={record?.name}
-          />
+          <UserProfileCard profile={record?.profileImage} name={record?.name} />
         );
       },
     },
@@ -66,11 +62,11 @@ function CustomerPage() {
         return (
           <div>
             <MyButton
-              onClick={() =>
-                goToWithReturnUrl(
-                  PageLinks.dashboard.userProfile(UserType.USER, record?._id),
-                )
-              }
+              onClick={() => {
+                // goToWithReturnUrl(
+                //   PageLinks.dashboard.userProfile(UserType.USER, record?._id),
+                // )
+              }}
               name={"View"}
               size={"small"}
               color={"blue"}
