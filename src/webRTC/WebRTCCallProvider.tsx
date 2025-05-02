@@ -1,7 +1,6 @@
 import { IUser, SocketEventEnum } from "interfaces";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { getAccessToken } from "utils";
-import { initSocket } from "../socket/socketClient";
 import Emitter from "./Emitter";
 import MediaDevice from "./MediaDevice";
 import PeerConnection from "./PeerConnection";
@@ -23,19 +22,19 @@ export const WebRTCCallContext = createContext<WebRTCCallContextType>({
 });
 
 export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
-  childre,
+  children,
 }) => {
   const [state, setState] = useState({
     isCalling: false,
     isReceiving: false,
     callType: null as "audio" | "video" | null,
-    callerId: null as string | nul,
+    callerId: null as string | null,
   });
 
   const peerRef = useRef<PeerConnection | null>(null);
   const mediaRef = useRef<MediaDevice | null>(null);
 
-  const socket = useRef(initSocket(getAccessToken())).current;
+  const socket = useRef(initSocke(getAccessToken())).current;
 
   // Listen to call:start from emitter (initiator)
   useEffect(() => {
@@ -57,7 +56,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         onCandidate: (candidate) => {
           socket.emit(SocketEventEnum.ICE_CANDIDATE, {
             to,
-            candidat,
+            candidate,
           });
         },
         onOffer: (offer) => {
@@ -65,17 +64,17 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         onAnswer: (answer) => {
           socket.emit(SocketEventEnum.ANSWER, { to, answer });
-        ,
+        },
       });
 
       await peerRef.current.createOffer();
-    }
+    };
 
     Emitter.on("call:start", handleStart);
     return () => {
       Emitter.off("call:start", handleStart);
     };
-  }, [socket])
+  }, [socket]);
 
   // Listen to offer from other peer
   useEffect(() => {
@@ -84,7 +83,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
       async ({
         from,
         offer,
-        type
+        type,
       }: {
         from: IUser;
         offer: RTCSessionDescriptionInit;
@@ -94,15 +93,15 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           isReceiving: true,
           callType: type,
-          callerId: from._id
+          callerId: from._id,
         }));
         Emitter.emit("call:incoming", { from, type });
         // Save offer/caller for use after accept
         peerRef.current = {
           offer,
-          caller: from
+          caller: fro,
         } as any;
-      }
+      },
     );
   }, [socket]);
 
@@ -121,16 +120,16 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         onCandidate: (candidate) => {
           socket.emit(SocketEventEnum.ICE_CANDIDATE, {
             to: caller._id,
-            candidate
+            candidate,
           });
         },
         onOffer: () => {},
         onAnswer: (answer) => {
           socket.emit(SocketEventEnum.ANSWER, {
             to: caller._id,
-            answer
+            answe,
           });
-        }
+        },
       });
 
       peerRef.current = pc;
@@ -150,7 +149,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
       SocketEventEnum.ANSWER,
       async ({ answer }: { answer: RTCSessionDescriptionInit }) => {
         await peerRef.current?.setRemoteAnswer(answer);
-      }
+      },
     );
   }, [socket]);
 
