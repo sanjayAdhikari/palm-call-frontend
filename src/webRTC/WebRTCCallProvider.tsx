@@ -11,6 +11,7 @@ interface WebRTCCallContextType {
   isReceiving: boolean;
   callType: "audio" | "video" | null;
   callerId: string | null;
+  callerInfo: IUser | null;
   setState: React.Dispatch<React.SetStateAction<any>>;
 }
 
@@ -19,17 +20,21 @@ export const WebRTCCallContext = createContext<WebRTCCallContextType>({
   isReceiving: false,
   callType: null,
   callerId: null,
+  callerInfo: null,
   setState: () => {},
 });
 
 export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const ringtoneRef = useRef<HTMLAudioElement | null>(null);
+
   const [state, setState] = useState({
     isCalling: false,
     isReceiving: false,
     callType: null as "audio" | "video" | null,
     callerId: null as string | null,
+    callerInfo: null,
   });
 
   const peerRef = useRef<PeerConnection | null>(null);
@@ -48,6 +53,8 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
     }) => {
       mediaRef.current = new MediaDevice();
       const local = await mediaRef.current.start(type);
+      // 🔥 Emit your local stream immediately
+      Emitter.emit("call:streams", { local, remote: new MediaStream() });
 
       peerRef.current = new PeerConnection({
         stream: local,
@@ -77,6 +84,27 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [socket]);
 
+
+  useEffect(() => {
+    ringtoneRef.current = new Audio("/ringtone.mp3");
+    ringtoneRef.current.loop = true;
+
+    const stopRingtone = () => {
+      ringtoneRef.current?.pause();
+      ringtoneRef.current.currentTime = 0;
+    };
+
+    Emitter.on("call:accept", stopRingtone);
+    Emitter.on("call:reject", stopRingtone);
+    Emitter.on("call:end", stopRingtone);
+
+    return () => {
+      Emitter.off("call:accept", stopRingtone);
+      Emitter.off("call:reject", stopRingtone);
+      Emitter.off("call:end", stopRingtone);
+    };
+  }, []);
+
   // Listen to offer from other peer
   useEffect(() => {
     socket.on(
@@ -98,6 +126,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         }));
         Emitter.emit("call:incoming", { from, type });
         // Save offer/caller for use after accept
+        ringtoneRef.current?.play();
         peerRef.current = {
           offer,
           caller: from,
@@ -112,6 +141,9 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
       const { offer, caller } = peerRef.current as any;
       mediaRef.current = new MediaDevice();
       const local = await mediaRef.current.start(state.callType!);
+
+      // ringtoneRef.current?.pause();
+      // ringtoneRef.current.currentTime = 0;
 
       const pc = new PeerConnection({
         stream: local,
@@ -128,7 +160,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         onAnswer: (answer) => {
           socket.emit(SocketEventEnum.ANSWER, {
             to: caller._id,
-            answe,
+            answer,
           });
         },
       });
