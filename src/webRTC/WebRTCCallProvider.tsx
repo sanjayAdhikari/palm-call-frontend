@@ -1,6 +1,7 @@
 import { IUser, SocketEventEnum } from "interfaces";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { getAccessToken } from "utils";
+import { initSocket } from "../socket/socketClient";
 import Emitter from "./Emitter";
 import MediaDevice from "./MediaDevice";
 import PeerConnection from "./PeerConnection";
@@ -34,7 +35,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
   const peerRef = useRef<PeerConnection | null>(null);
   const mediaRef = useRef<MediaDevice | null>(null);
 
-  const socket = useRef(initSocke(getAccessToken())).current;
+  const socket = useRef(initSocket(getAccessToken())).current;
 
   // Listen to call:start from emitter (initiator)
   useEffect(() => {
@@ -99,7 +100,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         // Save offer/caller for use after accept
         peerRef.current = {
           offer,
-          caller: fro,
+          caller: from,
         } as any;
       },
     );
