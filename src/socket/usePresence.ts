@@ -5,13 +5,11 @@ export const usePresence = (userId: string) => {
   const [isOnline, setIsOnline] = useState(() => getPresence(userId));
 
   useEffect(() => {
-    if (userId) {
-      const update = () => {
-        setIsOnline(getPresence(userId));
-      };
-      const unsubscribe = subscribeToPresence(update);
-      return unsubscribe;
-    }
+    const update = () => {
+      setIsOnline(getPresence(userId));
+    };
+    const unsubscribe = subscribeToPresence(update);
+    return unsubscribe;
   }, [userId]);
 
   return isOnline;

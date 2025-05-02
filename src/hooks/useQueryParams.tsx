@@ -46,7 +46,7 @@ function useQueryParams() {
     to,
     getResponsiveBackLink,
     goToWithReturnUrl,
-    goToChatDetail,
+    goToChatDetails,
   };
 }
 

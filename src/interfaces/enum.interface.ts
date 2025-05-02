@@ -98,6 +98,7 @@ export enum SocketEventEnum {
   STOP_TYPING = "typing:stop",
   OFFER = "rtc:offer",
   ANSWER = "rtc:answer",
+  END = "rtc:end",
   ICE_CANDIDATE = "rtc:ice-candidate",
   USER_ONLINE = "presence:user_online",
   USER_OFFLINE = "presence:user_offline",

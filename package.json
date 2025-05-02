@@ -36,6 +36,7 @@
     "formik": "^2.4.2",
     "html2canvas": "^1.4.1",
     "latest-version": "^7.0.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "motion": "^12.6.0",
     "number-to-words": "^1.2.4",
@@ -54,6 +55,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/lodash": "^4.17.16",
     "@types/number-to-words": "^1.2.3",
     "@types/react": "^18.2.14",
     "@types/react-datepicker": "^4.19.1",

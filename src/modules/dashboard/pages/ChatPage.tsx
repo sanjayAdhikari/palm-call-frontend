@@ -1,14 +1,7 @@
-import { MyButton, MyMoreOption, PageTemplate } from "components";
+import { PageTemplate } from "components";
 import { PageLinks } from "constant";
 import { useAuthorization, useScreenSize } from "hooks";
-import {
-  AppIconType,
-  IUser,
-  QueryNames,
-  SocketEventEnum,
-  SupportChatStatusEnum,
-  UserType,
-} from "interfaces";
+import { IUser, QueryNames, SocketEventEnum, UserType } from "interfaces";
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -18,6 +11,7 @@ import {
 } from "../../../socket/socketClient";
 import { ChatBox } from "../components";
 import ChatHeader from "../components/ChatHeader";
+import ChatMoreOptions from "../components/ChatMoreOptions";
 import { ChatContext } from "../context";
 
 function SupportChatPage() {
@@ -84,24 +78,7 @@ function SupportChatPage() {
           <></>
         )
       }
-      titleRightChildren={
-        <div className="flex items-center gap-2">
-          <div className="flex items-center ">
-            <MyButton iconType={AppIconType.AUDIO_CALL} variant="text" />
-            <MyButton iconType={AppIconType.VIDEO_CALL} variant="text" />
-          </div>
-          <MyMoreOption
-            items={[SupportChatStatusEnum.COMPLETED].map((status) => ({
-              label: status,
-              onClick: async () => {
-                await toggleVisibility(details._id, status, {
-                  onSuccess: fetchThread,
-                });
-              },
-            }))}
-          />
-        </div>
-      }
+      titleRightChildren={<ChatMoreOptions participant={otherParticipant} />}
     >
       <div className="flex flex-col flex-1 overflow-hidden h-full w-full">
         {isDetailsLoading ? (

@@ -12,6 +12,7 @@ import moment from "moment";
 import React, { useContext, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Outlet, useSearchParams } from "react-router-dom";
+import { usePresence } from "../../../socket/usePresence";
 import { ChatContext } from "../context";
 
 function ChatComponent() {
@@ -135,6 +136,8 @@ const ThreadCard = ({
     if (!otherParticipant) return "Unknown";
     return otherParticipant?.name;
   })();
+  const isOnline = usePresence(otherParticipant?._id);
+
   //  name
   return (
     <div
@@ -161,7 +164,17 @@ const ThreadCard = ({
         <div className={"flex justify-between gap-2 w-full "}>
           <div className={"flex flex-col gap-1 w-full"}>
             <div className={"flex items-center justify-between text-xs"}>
-              <span className={"text-gray-500 text-lg"}>{Name}</span>
+              <div className={"flex flex-row gap-3 items-center"}>
+                <span className={"text-gray-500 text-lg"}>
+                  {Name.length > 12 ? Name.slice(0, 12) + "…" : Name}
+                </span>
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    isOnline ? "bg-green-500" : "bg-red-400"
+                  }`}
+                ></span>
+              </div>
+
               <span className={"text-ash-500"}>
                 {moment(details?.lastMessageAt)?.format("DD MMM yyyy")}
               </span>

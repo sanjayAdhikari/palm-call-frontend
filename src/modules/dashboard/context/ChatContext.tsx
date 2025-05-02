@@ -72,9 +72,10 @@ export default function ContextProvider({ children }) {
       return deleteHandler(ApiUrl.support.delete_thread(id), {
         onSuccess: async (res: any) => {
           const tempDetails: ISupportChat = { ...details };
-          tempDetails.messages.docs = tempDetails.messages.docs
-            .filter((e) => e?._id !== id)
-            .reverse();
+          tempDetails.messages.docs = tempDetails.messages.docs.filter(
+            (e) => e?._id !== id,
+          );
+          // .reverse();
           setDetails(tempDetails);
           typeof cb?.onSuccess === "function" && (await cb.onSuccess(res));
         },

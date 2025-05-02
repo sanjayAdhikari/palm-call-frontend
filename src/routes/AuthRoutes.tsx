@@ -13,7 +13,9 @@ import {
 } from "react-router-dom";
 
 import { AuthenticationRoute, DashboardRoute, SetupRoute } from "../modules";
-import { useSocketLifecycle } from "../socket/useSocketLifecycle";
+import CallModal from "../webRTC/CallModal";
+import CallWindow from "../webRTC/CallWindow";
+import { WebRTCCallProvider } from "../webRTC/WebRTCCallProvider";
 
 export default function AuthRoute() {
   const location = useLocation();
@@ -35,14 +37,18 @@ export default function AuthRoute() {
 
 function PrivateRouteComponent() {
   const { isAuthenticated, isAuthenticating } = useAppContext();
-  useSocketLifecycle();
+  // useSocketLifecycle();
 
   const { pathname } = useLocation();
 
   const canAccess = isAuthenticated;
   if (isAuthenticating) return <></>;
   return canAccess ? (
-    <Outlet />
+    <WebRTCCallProvider>
+      <Outlet />
+      <CallWindow />
+      <CallModal />
+    </WebRTCCallProvider>
   ) : (
     <Navigate to={PageLinks.auth.login} replace />
   );

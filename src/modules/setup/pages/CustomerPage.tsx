@@ -93,7 +93,7 @@ function CustomerPage() {
                 //   PageLinks.dashboard.userProfile(UserType.USER, record?._id),
                 // )
               }}
-              name={"View"}
+              name={"Chat"}
               size={"small"}
               color={"blue"}
               variant={"outlined"}
