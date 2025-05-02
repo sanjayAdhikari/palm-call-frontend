@@ -1,6 +1,7 @@
-type Callbacks = {
-  onTrack: (stream: MediaStream) => void;
-  onCandidate: (candidate: RTCIceCandidateInit) => void;
+type PeerConnectionConfig = {
+  stream: MediaStream;
+  onTrack: (remote: MediaStream) => void;
+  onCandidate: (candidate: RTCIceCandidate) => void;
   onOffer: (offer: RTCSessionDescriptionInit) => void;
   onAnswer: (answer: RTCSessionDescriptionInit) => void;
 };
@@ -8,29 +9,34 @@ type Callbacks = {
 export default class PeerConnection {
   private pc: RTCPeerConnection;
   private stream: MediaStream;
-  private callbacks: Callbacks;
-  private candidateQueue: RTCIceCandidateInit[] = [];
-  private remoteDescriptionSet = false;
-  private remoteStream: MediaStream | null = null;
+  private remoteStream: MediaStream;
+  private onTrack: (remote: MediaStream) => void;
+  private onCandidate: (candidate: RTCIceCandidate) => void;
+  private onOffer: (offer: RTCSessionDescriptionInit) => void;
+  private onAnswer: (answer: RTCSessionDescriptionInit) => void;
 
-  constructor(config: { stream: MediaStream } & Callbacks) {
+  constructor(config: PeerConnectionConfig) {
     this.stream = config.stream;
-    this.callbacks = config;
+    this.onTrack = config.onTrack;
+    this.onCandidate = config.onCandidate;
+    this.onOffer = config.onOffer;
+    this.onAnswer = config.onAnswer;
 
     this.pc = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
 
-    this.pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        this.callbacks.onCandidate(event.candidate.toJSON());
-      }
+    this.remoteStream = new MediaStream();
+
+    this.pc.onicecandidate = (e) => {
+      if (e.candidate) this.onCandidate(e.candidate);
     };
 
-    this.pc.ontrack = (event) => {
-      if (!this.remoteStream) this.remoteStream = new MediaStream();
-      this.remoteStream.addTrack(event.track);
-      this.callbacks.onTrack(this.remoteStream);
+    this.pc.ontrack = (e) => {
+      e.streams[0].getTracks().forEach((track) => {
+        this.remoteStream.addTrack(track);
+      });
+      this.onTrack(this.remoteStream);
     };
 
     this.stream.getTracks().forEach((track) => {
@@ -41,33 +47,24 @@ export default class PeerConnection {
   async createOffer() {
     const offer = await this.pc.createOffer();
     await this.pc.setLocalDescription(offer);
-    this.callbacks.onOffer(offer);
+    this.onOffer(offer);
+  }
+
+  async setRemoteOffer(offer: RTCSessionDescriptionInit) {
+    await this.pc.setRemoteDescription(new RTCSessionDescription(offer));
   }
 
   async createAnswer() {
     const answer = await this.pc.createAnswer();
     await this.pc.setLocalDescription(answer);
-    this.callbacks.onAnswer(answer);
-  }
-
-  async setRemoteOffer(offer: RTCSessionDescriptionInit) {
-    await this.pc.setRemoteDescription(new RTCSessionDescription(offer));
-    this.remoteDescriptionSet = true;
-    await this.flushCandidateQueue();
+    this.onAnswer(answer);
   }
 
   async setRemoteAnswer(answer: RTCSessionDescriptionInit) {
     await this.pc.setRemoteDescription(new RTCSessionDescription(answer));
-    this.remoteDescriptionSet = true;
-    await this.flushCandidateQueue();
   }
 
   async addIceCandidate(candidate: RTCIceCandidateInit) {
-    if (!this.remoteDescriptionSet) {
-      this.candidateQueue.push(candidate);
-      return;
-    }
-
     try {
       await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
     } catch (err) {
@@ -77,16 +74,5 @@ export default class PeerConnection {
 
   close() {
     this.pc.close();
-  }
-
-  private async flushCandidateQueue() {
-    for (const candidate of this.candidateQueue) {
-      try {
-        await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (err) {
-        console.error("Error adding buffered ICE candidate", err);
-      }
-    }
-    this.candidateQueue = [];
   }
 }

@@ -1,38 +1,44 @@
-import { Modal } from "antd";
-import { MyButton, ViewFile } from "components";
-import React from "react";
+import { ViewFile } from "components";
 import { useCall } from "./useCall";
 
-const CallModal: React.FC = () => {
+const CallModal = () => {
   const { isReceiving, callType, callerInfo, acceptCall, rejectCall } =
     useCall();
+
   if (!isReceiving) return null;
 
   return (
-    <Modal open={isReceiving} centered footer={null} closable={false}>
-      <div className="text-center">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg p-6 w-[320px] text-center shadow-xl">
         {callType === "audio" && callerInfo?.profileImage && (
           <ViewFile
             name={[callerInfo.profileImage]}
-            className="w-16 h-16 rounded-full mx-auto mb-4"
+            canPreview={false}
+            className="w-16 h-16 mx-auto rounded-full object-cover mb-3"
           />
         )}
 
-        <p className="mb-2 font-medium">
+        <p className="mb-2 text-lg font-semibold">
           Incoming {callType} call from{" "}
-          <strong>{callerInfo?.name ?? "Unknown"}</strong>
+          <span className="text-blue-600">{callerInfo?.name ?? "Unknown"}</span>
         </p>
 
         <div className="flex justify-center gap-4 mt-4">
-          <MyButton color="green" onClick={acceptCall}>
+          <button
+            onClick={acceptCall}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
             Accept
-          </MyButton>
-          <MyButton color="danger" onClick={rejectCall}>
+          </button>
+          <button
+            onClick={rejectCall}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
             Reject
-          </MyButton>
+          </button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 

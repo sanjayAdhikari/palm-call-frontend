@@ -6,170 +6,174 @@ import Emitter from "./Emitter";
 import MediaDevice from "./MediaDevice";
 import PeerConnection from "./PeerConnection";
 
-const initialState = {
+interface WebRTCCallContextType {
+  isCalling: boolean;
+  isReceiving: boolean;
+  callType: "audio" | "video" | null;
+  callerId: string | null;
+  setState: React.Dispatch<React.SetStateAction<any>>;
+}
+
+export const WebRTCCallContext = createContext<WebRTCCallContextType>({
   isCalling: false,
   isReceiving: false,
-  callType: null as "audio" | "video" | null,
+  callType: null,
   callerId: null,
-  callerProfile: null,
-};
-export const WebRTCCallContext = createContext({
-  ...initialState,
-  setState: (_: any) => {},
+  setState: () => {},
 });
 
-export const WebRTCCallProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
+export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
+  childre,
 }) => {
-  const [callState, setCallState] = useState(initialState);
-
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  const [incomingCall, setIncomingCall] = useState<any>(null);
+  const [state, setState] = useState({
+    isCalling: false,
+    isReceiving: false,
+    callType: null as "audio" | "video" | null,
+    callerId: null as string | nul,
+  });
 
   const peerRef = useRef<PeerConnection | null>(null);
   const mediaRef = useRef<MediaDevice | null>(null);
-  const socket = initSocket(getAccessToken());
 
-  const reset = () => {
-    peerRef.current?.close();
-    mediaRef.current?.stop();
+  const socket = useRef(initSocket(getAccessToken())).current;
 
-    peerRef.current = null;
-    mediaRef.current = null;
-    setRemoteStream(null);
-    setLocalStream(null);
-    setIncomingCall(null);
-    setCallState(initialState);
-    Emitter.emit("call:end");
-  };
-
-  const initCall = async (
-    isCaller: boolean,
-    type: "audio" | "video",
-    remoteUserId: IUser,
-  ) => {
-    mediaRef.current = new MediaDevice();
-    const local = await mediaRef.current.start(type);
-    setLocalStream(local);
-    Emitter.emit("call:streams", { local, remote: null });
-
-    peerRef.current = new PeerConnection({
-      stream: local,
-      onTrack: (stream) => {
-        setRemoteStream(stream);
-        Emitter.emit("call:streams", { local, remote: stream });
-      },
-      onCandidate: (candidate) => {
-        socket.emit(SocketEventEnum.ICE_CANDIDATE, {
-          to: remoteUserId?._id,
-          candidate,
-        });
-      },
-      onOffer: (offer) => {
-        socket.emit(SocketEventEnum.OFFER, {
-          to: remoteUserId?._id,
-          offer,
-          type,
-        });
-      },
-      onAnswer: (answer) => {
-        socket.emit(SocketEventEnum.ANSWER, { to: remoteUserId?._id, answer });
-      },
-    });
-
-    if (isCaller) {
-      await peerRef.current.createOffer();
-    }
-  };
-
+  // Listen to call:start from emitter (initiator)
   useEffect(() => {
-    socket.on(SocketEventEnum.OFFER, async ({ from, offer, type }) => {
-      setIncomingCall({ from, offer, type });
-      setCallState((prev) => ({
-        ...prev,
-        isReceiving: true,
-        callType: type,
-        callerId: from?._id,
-        callerProfile: from,
-      }));
-      Emitter.emit("call:incoming", { from, type });
-    });
-
-    socket.on(SocketEventEnum.ANSWER, async ({ answer }) => {
-      await peerRef.current?.setRemoteAnswer(answer);
-    });
-
-    socket.on(SocketEventEnum.ICE_CANDIDATE, async ({ candidate }) => {
-      await peerRef.current?.addIceCandidate(candidate);
-    });
-
-    socket.on(SocketEventEnum.END, () => {
-      reset(); // this will end call for both parties
-    });
-
-    return () => {
-      socket.off(SocketEventEnum.OFFER);
-      socket.off(SocketEventEnum.ANSWER);
-      socket.off(SocketEventEnum.ICE_CANDIDATE);
-      socket.off(SocketEventEnum.END);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleStart = ({
+    const handleStart = async ({
       to,
       type,
     }: {
       to: string;
       type: "audio" | "video";
     }) => {
-      setCallState((prev) => ({
-        ...prev,
-        isCalling: true,
-        callType: type,
-        callerId: to,
-      }));
-      initCall(true, type, to);
-    };
+      mediaRef.current = new MediaDevice();
+      const local = await mediaRef.current.start(type);
 
-    const handleAccept = async () => {
-      if (!incomingCall) return;
-      const { from, offer, type } = incomingCall;
-      setCallState((prev) => ({
-        ...prev,
-        isCalling: true,
-        isReceiving: false,
-        callerId: from,
-        callType: type,
-      }));
-      await initCall(false, type, from);
-      await peerRef.current?.setRemoteOffer(offer);
-      await peerRef.current?.createAnswer();
-    };
+      peerRef.current = new PeerConnection({
+        stream: local,
+        onTrack: (remote) => {
+          Emitter.emit("call:streams", { local, remote });
+        },
+        onCandidate: (candidate) => {
+          socket.emit(SocketEventEnum.ICE_CANDIDATE, {
+            to,
+            candidat,
+          });
+        },
+        onOffer: (offer) => {
+          socket.emit(SocketEventEnum.OFFER, { to, offer, type });
+        },
+        onAnswer: (answer) => {
+          socket.emit(SocketEventEnum.ANSWER, { to, answer });
+        ,
+      });
 
-    const handleReject = () => {
-      socket.emit(SocketEventEnum.END, { to: incomingCall.from?._id });
-      reset();
-    };
+      await peerRef.current.createOffer();
+    }
 
     Emitter.on("call:start", handleStart);
-    Emitter.on("call:accept", handleAccept);
-    Emitter.on("call:reject", handleReject);
-
     return () => {
       Emitter.off("call:start", handleStart);
-      Emitter.off("call:accept", handleAccept);
-      Emitter.off("call:reject", handleReject);
     };
-  }, [incomingCall]);
+  }, [socket])
+
+  // Listen to offer from other peer
+  useEffect(() => {
+    socket.on(
+      SocketEventEnum.OFFER,
+      async ({
+        from,
+        offer,
+        type
+      }: {
+        from: IUser;
+        offer: RTCSessionDescriptionInit;
+        type: "audio" | "video";
+      }) => {
+        setState((prev) => ({
+          ...prev,
+          isReceiving: true,
+          callType: type,
+          callerId: from._id
+        }));
+        Emitter.emit("call:incoming", { from, type });
+        // Save offer/caller for use after accept
+        peerRef.current = {
+          offer,
+          caller: from
+        } as any;
+      }
+    );
+  }, [socket]);
+
+  // Listen for accept
+  useEffect(() => {
+    const handleAccept = async () => {
+      const { offer, caller } = peerRef.current as any;
+      mediaRef.current = new MediaDevice();
+      const local = await mediaRef.current.start(state.callType!);
+
+      const pc = new PeerConnection({
+        stream: local,
+        onTrack: (remote) => {
+          Emitter.emit("call:streams", { local, remote });
+        },
+        onCandidate: (candidate) => {
+          socket.emit(SocketEventEnum.ICE_CANDIDATE, {
+            to: caller._id,
+            candidate
+          });
+        },
+        onOffer: () => {},
+        onAnswer: (answer) => {
+          socket.emit(SocketEventEnum.ANSWER, {
+            to: caller._id,
+            answer
+          });
+        }
+      });
+
+      peerRef.current = pc;
+      await pc.setRemoteOffer(offer);
+      await pc.createAnswer();
+    };
+
+    Emitter.on("call:accept", handleAccept);
+    return () => {
+      Emitter.off("call:accept", handleAccept);
+    };
+  }, [state.callType, socket]);
+
+  // Remote answer (received by initiator)
+  useEffect(() => {
+    socket.on(
+      SocketEventEnum.ANSWER,
+      async ({ answer }: { answer: RTCSessionDescriptionInit }) => {
+        await peerRef.current?.setRemoteAnswer(answer);
+      }
+    );
+  }, [socket]);
+
+  // ICE candidate
+  useEffect(() => {
+    socket.on(SocketEventEnum.ICE_CANDIDATE, async ({ candidate }) => {
+      await peerRef.current?.addIceCandidate(candidate);
+    });
+  }, [socket]);
+
+  // End
+  useEffect(() => {
+    socket.on(SocketEventEnum.END, () => {
+      Emitter.emit("call:end");
+      peerRef.current?.close();
+      mediaRef.current?.stop();
+      peerRef.current = null;
+      mediaRef.current = null;
+    });
+  }, [socket]);
 
   return (
-    <WebRTCCallContext.Provider
-      value={{ ...callState, setState: setCallState }}
-    >
+    <WebRTCCallContext.Provider value={{ ...state, setState }}>
       {children}
     </WebRTCCallContext.Provider>
   );
