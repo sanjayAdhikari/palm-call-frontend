@@ -1,8 +1,8 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const port = 8002;
+const port = 9002;
 const app = express();
 
 // Get __dirname equivalent in ES Modules
@@ -24,5 +24,5 @@ app.get('*', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`Hyre Tracking serving at http://localhost:${port}`);
+  console.log(`Palm mind Chat App serving at http://localhost:${port}`);
 });
