@@ -95,7 +95,7 @@ function MyInput({
           <Input.TextArea
             {...field}
             onKeyDown={(value) => {
-              typeof onChange == "function" && onChange(value);
+              typeof onChange == "function" && onKeyDown(value);
             }}
             className={props?.className || "bg-transparent"}
             status={isError ? "error" : undefined}

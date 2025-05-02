@@ -164,6 +164,7 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
   };
 
   const handleTyping = (val: any) => {
+    console.log("handleTyping value", val);
     if (val.trim()) {
       if (!isTyping) {
         sendTyping(thread._id, true);
