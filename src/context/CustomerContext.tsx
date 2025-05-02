@@ -1,7 +1,7 @@
-import { createContext } from "react";
-import { IContext, IGetApiQuery, IPaginateData, IUser } from "interfaces";
-import { useContextData } from "hooks";
 import { ApiUrl } from "constant";
+import { useContextData } from "hooks";
+import { IContext, IGetApiQuery, IPaginateData, IUser } from "interfaces";
+import { createContext } from "react";
 
 export const CustomerContext = createContext<
   IContext<IPaginateData<IUser>, IUser>
@@ -36,8 +36,10 @@ export default function ContextProvider({ children }) {
         havePagination: true,
       });
     },
-    async getDetailsHandler(id: string) {
-      return getDetailsHandler(ApiUrl.customers.get_details(id));
+    async getDetailsHandler(participantID: string) {
+      return getDetailsHandler(
+        ApiUrl.support.get_threadByParticipant(participantID),
+      );
     },
   };
   return (

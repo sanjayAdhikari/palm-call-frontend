@@ -31,6 +31,14 @@ function useQueryParams() {
     });
   };
 
+  const goToChatDetails = (thread: string) => {
+    navigate(
+      isSmScreen
+        ? PageLinks.dashboard.details_new(thread)
+        : PageLinks.dashboard?.details(thread),
+    );
+  };
+
   return {
     isActiveList,
     editId,
@@ -38,6 +46,7 @@ function useQueryParams() {
     to,
     getResponsiveBackLink,
     goToWithReturnUrl,
+    goToChatDetail,
   };
 }
 

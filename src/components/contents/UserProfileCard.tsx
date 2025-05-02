@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-import { Rate } from "antd";
 import { UserIconPlaceholder } from "components";
+import { IUser } from "interfaces";
+import React, { useState } from "react";
+import { usePresence } from "../../socket/usePresence";
 import ViewFile from "./ViewFile";
 
 export default function UserProfileCard({
-  name,
+  user,
   profile,
   title,
   hideProfile,
   textClassName,
 }: {
-  name: string;
+  user: IUser;
   profile?: string;
   rating?: number;
   textClassName?: string;
@@ -20,7 +21,8 @@ export default function UserProfileCard({
 }) {
   const [errorOnLoadingImage, setErrorLoadingImage] = useState(false);
 
-  const fullName = name.trim();
+  const fullName = user?.name.trim();
+  const isOnline = usePresence(user?._id);
 
   return (
     <div className=" flex items-center space-x-3">
@@ -34,11 +36,15 @@ export default function UserProfileCard({
           onError={(val) => setErrorLoadingImage(val)}
         />
       )}
-      <div className={"flex flex-col"}>
+      <div className={"flex flex-row items-center gap-2"}>
+        <span
+          className={`h-2 w-2 rounded-full ${
+            isOnline ? "bg-green-500" : "bg-red-400"
+          }`}
+        ></span>
         <span className={`text-base font-medium ${textClassName}`}>
           {fullName}
         </span>
-        {title && <span className={"text-xs text-ash-500"}>{title}</span>}
       </div>
     </div>
   );

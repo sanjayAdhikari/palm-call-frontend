@@ -1,10 +1,10 @@
-import React from "react";
-import { Input, DatePicker, Select, Radio, Checkbox, InputNumber } from "antd";
-import { useField } from "formik";
-import { IInput } from "./ui.interface";
-import moment from "moment";
+import { Checkbox, DatePicker, Input, InputNumber, Radio, Select } from "antd";
 import dayjs from "dayjs";
+import { useField } from "formik";
 import { useScreenSize } from "hooks";
+import moment from "moment";
+import React from "react";
+import { IInput } from "./ui.interface";
 
 function MyInput({ isRequired, label, inputType, onChange, ...props }: IInput) {
   const [field, meta, helpers] = useField(props);
@@ -87,6 +87,7 @@ function MyInput({ isRequired, label, inputType, onChange, ...props }: IInput) {
         return (
           <Input.TextArea
             {...field}
+            {...props}
             className={props?.className || "bg-transparent"}
             status={isError ? "error" : undefined}
             size={inputSize}
@@ -170,7 +171,13 @@ function MyInput({ isRequired, label, inputType, onChange, ...props }: IInput) {
           <Input
             {...field}
             {...props}
-            className={`${inputSize == "small" ? " h-[27px] text-sm" : inputSize == "middle" ? "h-[32px]" : ""} rounded-md border-[#D8D8D9] bg-transparent hover:border-blue-500`}
+            className={`${
+              inputSize == "small"
+                ? " h-[27px] text-sm"
+                : inputSize == "middle"
+                  ? "h-[32px]"
+                  : ""
+            } rounded-md border-[#D8D8D9] bg-transparent hover:border-blue-500`}
             status={isError ? "error" : undefined}
             size={inputSize}
             variant={variant}

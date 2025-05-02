@@ -1,8 +1,8 @@
-import React from "react";
-import Logo from "assets/logo.jpg";
 import { MyButton } from "components";
-import { useNavigate } from "react-router-dom";
 import { PageLinks } from "constant";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
 function NotFoundComponent() {
   const navigate = useNavigate();
   return (
@@ -25,7 +25,7 @@ function NotFoundComponent() {
         <MyButton
           variant={"outlined"}
           name={"Back to home"}
-          onClick={() => navigate(PageLinks.dashboard.list)}
+          onClick={() => navigate(PageLinks.dashboard.chat)}
         />
       </div>
     </div>

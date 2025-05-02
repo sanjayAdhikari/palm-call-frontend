@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 
 import { AuthenticationRoute, DashboardRoute, SetupRoute } from "../modules";
+import { useSocketLifecycle } from "../socket/useSocketLifecycle";
 
 export default function AuthRoute() {
   const location = useLocation();
@@ -34,6 +35,8 @@ export default function AuthRoute() {
 
 function PrivateRouteComponent() {
   const { isAuthenticated, isAuthenticating } = useAppContext();
+  useSocketLifecycle();
+
   const { pathname } = useLocation();
 
   const canAccess = isAuthenticated;
@@ -50,7 +53,7 @@ function PublicRouteComponent() {
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(PageLinks.dashboard.list, {
+      navigate(PageLinks.dashboard.chat, {
         replace: true,
       });
     }

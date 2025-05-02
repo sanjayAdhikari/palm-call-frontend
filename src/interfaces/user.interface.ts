@@ -1,23 +1,15 @@
-import { KycStatusEnum, UserType } from "./enum.interface";
-import { IVendor } from "./cargo.interface";
+import { UserType } from "./enum.interface";
 
 export interface IUser {
-  profileImage: string;
-  email: string;
-  isActive: boolean;
-  isEmailVerified: boolean;
-  isSeed: boolean;
-  kycStatus: KycStatusEnum;
-  hasProfileSetup: boolean;
-  name: string;
-  phone: string;
-  referralCode: string;
-  userID: string;
-  userType: UserType;
-  username: string;
   _id: string;
-  vendor?: IVendor;
+  email: string;
+  name: string;
+  profileImage: string;
+  isEmailVerified: boolean;
+  phone: string;
+  userType: UserType;
 }
+
 export interface IAdminUser {
   _id: string;
   customer: IUser;
@@ -39,6 +31,7 @@ export interface IAddress {
   county: string;
   postalCode: string;
 }
+
 export interface IConsignee {
   _id: string;
   name: string;

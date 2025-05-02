@@ -5,11 +5,8 @@ function UseAuthorization() {
   const { userDetails } = useAppContext();
   const currentRole = userDetails?.userType;
   const currentUserId = userDetails?._id;
-  const currentVendorId = userDetails?.vendor?._id;
   const isUser = currentRole === UserType.USER;
-  const isAdmin = currentRole === UserType.HYRE;
-  const isVendor = currentRole === UserType.INTERNATIONAL_CARGO_VENDOR;
-  const kycStatus = userDetails?.kycStatus;
+  const isAdmin = currentRole === UserType.AGENT;
 
   const isDevelopmentMode = import.meta.env.DEV;
 
@@ -24,15 +21,12 @@ function UseAuthorization() {
   };
 
   return {
-    currentVendorId,
     currentRole,
     currentUserId,
     userDetails,
-    kycStatus,
     isDevelopmentMode,
     isAdmin,
     isUser,
-    isVendor,
     canAccess,
   };
 }

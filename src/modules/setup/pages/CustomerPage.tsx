@@ -1,21 +1,32 @@
 import { Tag } from "antd";
 import { MyButton, MyTable, PageTemplate, UserProfileCard } from "components";
-import { PageLinks } from "constant";
+import { ApiUrl, PageLinks } from "constant";
 import { CustomerContext, useAppContext } from "context";
 import { useAuthorization, useQueryParams } from "hooks";
 import { AppIconType, ITableColumns, IUser } from "interfaces";
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Api } from "services";
 import { getIconsHandler, getSerialNumber } from "utils";
+import { ChatContext } from "../../dashboard/context";
 
 function CustomerPage() {
   const { userDetails } = useAuthorization();
   const NotificationIcon = getIconsHandler(AppIconType.NOTIFICATION);
   const { count } = useAppContext();
 
-  const { isLoading, lists, getListHandler, currentPage } =
-    useContext(CustomerContext);
+  const {
+    isLoading,
+    lists,
+    getListHandler,
+    currentPage,
+    getDetailsHandler,
+    details,
+  } = useContext(CustomerContext);
+
+  const {} = useContext(ChatContext);
   const { isActiveList } = useQueryParams();
+  const { goToChatDetails } = useQueryParams();
 
   const fetchHandler = async (page?: number) => {
     await getListHandler({
@@ -28,8 +39,19 @@ function CustomerPage() {
       await fetchHandler(1);
     })();
   }, [isActiveList]);
-  const { getResponsiveBackLink, goToWithReturnUrl } = useQueryParams();
   const navigate = useNavigate();
+  const { getApi } = Api();
+
+  const onThreadPreview = async (record: IUser) => {
+    // get thread ID through participants
+    const res = await getApi(
+      ApiUrl.support.get_threadByParticipant(record._id),
+    );
+    console.log("response", res.data);
+    if (res.data?._id) {
+      goToChatDetails(res.data?._id);
+    }
+  };
   const TableColumns: ITableColumns<IUser>[] = [
     {
       title: "S.N.",
@@ -40,9 +62,7 @@ function CustomerPage() {
     {
       title: "Name",
       render: (value, record) => {
-        return (
-          <UserProfileCard profile={record?.profileImage} name={record?.name} />
-        );
+        return <UserProfileCard profile={record?.profileImage} user={record} />;
       },
     },
     {
@@ -68,6 +88,7 @@ function CustomerPage() {
           <div>
             <MyButton
               onClick={() => {
+                void onThreadPreview(record);
                 // goToWithReturnUrl(
                 //   PageLinks.dashboard.userProfile(UserType.USER, record?._id),
                 // )
@@ -85,7 +106,7 @@ function CustomerPage() {
     },
   ];
   return (
-    <PageTemplate backLink={PageLinks.dashboard.list}>
+    <PageTemplate backLink={PageLinks.dashboard.chat}>
       <div className={"flex flex-col"}>
         <div className={"mb-10 flex items-center justify-between"}>
           <div className={"flex items-center gap-4"}>

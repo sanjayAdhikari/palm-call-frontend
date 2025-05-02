@@ -4,7 +4,7 @@ import { PageLinks } from "./PageLinks";
 export const NavLink: INavigationItem[] = [
   {
     name: "Chat",
-    path: PageLinks.dashboard.list,
+    path: PageLinks.dashboard.chat,
     icon: AppIconType.SUPPORT,
     showInMenu: true,
   },
@@ -13,6 +13,6 @@ export const NavLink: INavigationItem[] = [
     path: PageLinks.customers.list,
     icon: AppIconType.CUSTOMER,
     showInMenu: true,
-  }
+  },
 ];
 

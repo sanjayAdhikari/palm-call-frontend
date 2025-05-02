@@ -5,7 +5,7 @@ import React from "react";
 
 function MorePage() {
   return (
-    <PageTemplate title={"More"} backLink={PageLinks.dashboard.list}>
+    <PageTemplate title={"More"} backLink={PageLinks.dashboard.chat}>
       <NavProfileContent showMoreNavLink />
     </PageTemplate>
   );

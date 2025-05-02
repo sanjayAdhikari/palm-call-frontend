@@ -14,15 +14,8 @@ const validationSchema = yup.object().shape({
     .mixed<UserType>()
     .oneOf([UserType.USER, UserType.AGENT])
     .required("Select a role"),
-  email: yup
-    .string()
-    .trim()
-    .email(" ")
-    .required(" "),
-  password: yup
-    .string()
-    .min(6, " ")
-    .required(" "),
+  email: yup.string().trim().email(" ").required(" "),
+  password: yup.string().min(6, " ").required(" "),
 });
 
 function LoginPage() {
@@ -45,7 +38,7 @@ function LoginPage() {
   const onSubmitHandler = async (values: any) => {
     await loginHandler(values, {
       onSuccess: async (res: any) => {
-        navigate(PageLinks.dashboard.list, {
+        navigate(PageLinks.dashboard.chat, {
           replace: true,
         });
       },

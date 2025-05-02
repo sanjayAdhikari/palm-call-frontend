@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { NavLink as RouterNavLink } from "react-router-dom";
-import { useAuthorization, useScreenSize } from "hooks";
-import { AppIconType, KycStatusEnum } from "interfaces";
+import { EditUserProfile, ViewFile } from "components";
 import { NavLink } from "constant";
 import { useAppContext } from "context";
+import { useAuthorization, useScreenSize } from "hooks";
+import { AppIconType } from "interfaces";
+import React, { useState } from "react";
+import { NavLink as RouterNavLink } from "react-router-dom";
 import { getIconsHandler } from "utils";
-import { ViewFile, EditUserProfile } from "components";
 
 function NavProfileContent({ showMoreNavLink }: { showMoreNavLink?: boolean }) {
   const {
@@ -25,7 +25,7 @@ function NavProfileContent({ showMoreNavLink }: { showMoreNavLink?: boolean }) {
     }
     return canAccess(e?.canAccessBy);
   });
-  const isVerified = userDetails?.kycStatus === KycStatusEnum.VERIFIED;
+  const isVerified = true;
 
   const Profile = (
     <div className={"flex flex-col sm:py-2 py-5 items-center justify-center"}>

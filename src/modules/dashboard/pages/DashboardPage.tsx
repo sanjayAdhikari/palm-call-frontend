@@ -6,6 +6,7 @@ import { AppIconType } from "interfaces";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { getIconsHandler } from "utils";
+import ChatComponent from "../components/ChatComponent";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function DashboardPage() {
   const { count } = useAppContext();
   return (
     <PageTemplate>
-      <div className={"flex flex-col"}>
+      <div className={"flex flex-col h-full "}>
         <div className={"flex items-center justify-between"}>
           <div className={"flex items-center gap-4"}>
             <div className={"font-bold text-lg"}>Chats</div>
@@ -35,7 +36,7 @@ function DashboardPage() {
             )}
           </div>
         </div>
-        <div className={"max-w-[500px]"}>Dashboard Detail</div>
+        <ChatComponent />
       </div>
     </PageTemplate>
   );

@@ -1,23 +1,23 @@
-import React, { useContext, useEffect } from "react";
+import { Skeleton } from "antd";
+
+import Logo from "assets/logo.jpg";
 import {
   EmptyMessageComponent,
   FilterComponent,
   PageTemplate,
 } from "components";
-import moment from "moment";
+import { PageLinks } from "constant";
+import { NotificationContext } from "context";
+import { useQueryParams } from "hooks";
 import {
   AppIconType,
   INotification,
   NotificationCategoryEnum,
 } from "interfaces";
-import { NotificationContext } from "context";
-import { getIconsHandler } from "utils";
-
-import Logo from "assets/logo.jpg";
-import { PageLinks } from "constant";
-import { useQueryParams } from "hooks";
+import moment from "moment";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Skeleton } from "antd";
+import { getIconsHandler } from "utils";
 
 function NotificationPage() {
   const { isLoading, lists, getListHandler } = useContext(NotificationContext);
@@ -32,7 +32,7 @@ function NotificationPage() {
     })();
   }, [from, to]);
   return (
-    <PageTemplate backLink={PageLinks.dashboard.list} title={"Notification"}>
+    <PageTemplate backLink={PageLinks.dashboard.chat} title={"Notification"}>
       <div className={"flex flex-col gap-2 w-full"}>
         <div className={"flex justify-end"}>
           <FilterComponent />
@@ -59,22 +59,12 @@ const NotificationCard = ({ details }: { details: INotification }) => {
   const navigate = useNavigate();
   const Icon = (() => {
     switch (details?.category) {
-      case NotificationCategoryEnum.COUPON:
-        return getIconsHandler(AppIconType.COUPON);
-      case NotificationCategoryEnum.ORDER:
-        return getIconsHandler(AppIconType.PARCEL);
-      case NotificationCategoryEnum.POINT_EARNED:
-        return getIconsHandler(AppIconType.WALLET);
       case NotificationCategoryEnum.SYSTEM:
         return getIconsHandler(AppIconType.WALLET);
-      case NotificationCategoryEnum.POINT_SPENT:
-        return getIconsHandler(AppIconType.WALLET);
-      case NotificationCategoryEnum.THREAD:
+      case NotificationCategoryEnum.CHAT:
         return getIconsHandler(AppIconType.SUPPORT);
-      case NotificationCategoryEnum.REFERRAL:
-        return getIconsHandler(AppIconType.REFERRAL);
       default:
-        return getIconsHandler(AppIconType.WALLET);
+        return getIconsHandler(AppIconType.SUPPORT);
     }
   })();
 

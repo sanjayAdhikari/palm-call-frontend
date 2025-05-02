@@ -1,5 +1,5 @@
-import { AppIconType, IDeliveryType, UserType } from "interfaces";
 import type { TableColumnProps } from "antd";
+import { AppIconType, UserType } from "interfaces";
 import * as React from "react";
 
 export interface INavigationItem {
@@ -17,8 +17,10 @@ interface SelectOptionType {
   disabled?: boolean;
   className?: string;
   title?: string;
+
   [name: string]: any;
 }
+
 export interface ISelectOption extends SelectOptionType {
   label?: string | React.ReactNode;
   value?: string | number | null;
@@ -50,10 +52,15 @@ export interface IContext<TList, TDetails> {
   currentPage?: number;
   isLoading?: boolean;
   isDetailsLoading?: boolean;
+
   getListHandler?(query?: IGetApiQuery): Promise<void>;
+
   getDetailsHandler?(id: string | Record<string, string>): Promise<void>;
+
   editHandler?(payload: any, cb?: ICallbackFunction): Promise<void>;
+
   deleteHandler?(id: string, cb?: ICallbackFunction): Promise<void>;
+
   toggleVisibility?(
     id: string,
     visibilityStatus: any,
@@ -72,5 +79,6 @@ export interface IGetApiQuery {
   pageSize?: number;
   page?: number;
   savePrevState?: boolean;
+
   [Key: string]: any;
 }

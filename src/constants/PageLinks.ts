@@ -1,11 +1,13 @@
-import { ParamsNames, QueryNames, UserType } from "interfaces";
+import { QueryNames, UserType } from "interfaces";
 
 export const PageLinks = {
   customers: {
     list: "/customers",
   },
   dashboard: {
-    list: "/dashboard",
+    chat: "/dashboard",
+    details: (id: string) => `/dashboard?${QueryNames.ID}=${id}`, // for lg screen    details_new: (id: string) => `/order/activity/details/${id}`, // for sm screen
+    details_new: (id: string) => `/dashboard/details/${id}`, // for sm screen
     more: "/more",
   },
   notification: {

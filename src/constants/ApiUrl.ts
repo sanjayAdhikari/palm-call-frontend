@@ -1,5 +1,3 @@
-import { PackageStatusEnum } from "interfaces";
-
 export default {
   auth: {
     post_login: "/api/v1/user/login",
@@ -30,7 +28,7 @@ export default {
     get_lists: "/api/v1/user",
   },
   customers: {
-    get_lists: "/api/v1/user/customer",
+    get_lists: "/api/v1/user/",
     get_details: (id: string) => `/api/v1/user/detail/${id}`,
   },
   badge: {
@@ -153,11 +151,16 @@ export default {
       `/api/v1/activity/pay-through-wallet/${id}`,
   },
   support: {
-    get_threadList: `/api/v1/support/threads`,
-    get_chat: `/api/v1/support/chat`,
-    post_sendMessage: "api/v1/support/chat",
-    delete_message: (id: string) => `/api/v1/support/chat/delete/${id}`,
-    put_changeStatus: `/api/v1/support/thread/change-status`,
+    get_threadList: `/api/v1/chat/threads`,
+    get_threadDetail: (threadID: string) =>
+      `/api/v1/chat/thread/detail/${threadID}`,
+    get_threadByParticipant: (participantID: string) =>
+      `/api/v1/chat/thread/participant/${participantID}`,
+    get_chat: (threadID: string) => `/api/v1/chat/messages/${threadID}`,
+    post_sendMessage: `/api/v1/chat/messages/`,
+    delete_thread: (threadID: string) =>
+      `/api/v1/chat/thread/delete/${threadID}`,
+    put_changeStatus: `/api/v1/chat/thrad/change-status`,
   },
   package: {
     get_list: `/api/v1/package/`,

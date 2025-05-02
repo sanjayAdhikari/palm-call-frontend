@@ -1,9 +1,9 @@
-import React from "react";
-import NavComponent from "./NavComponent";
+import { PageLinks } from "constant";
 import { useAppContext } from "context";
 import { useScreenSize } from "hooks";
-import { PageLinks } from "constant";
+import React from "react";
 import { useLocation } from "react-router-dom";
+import NavComponent from "./NavComponent";
 
 function Index({ children }) {
   const { isAuthenticated } = useAppContext();
@@ -11,7 +11,7 @@ function Index({ children }) {
     size: { height },
   } = useScreenSize();
   const { pathname } = useLocation();
-  const allowedPages = [PageLinks.dashboard.list, PageLinks.dashboard.more];
+  const allowedPages = [PageLinks.dashboard.chat, PageLinks.dashboard.more];
   const { isSmScreen } = useScreenSize();
   const showNav =
     (allowedPages.some((e) => e.includes(pathname)) || !isSmScreen) &&
@@ -21,7 +21,11 @@ function Index({ children }) {
       style={{
         height: `${height}px`,
       }}
-      className={`w-screen overflow-y-scroll hide-scrollbar grid ${showNav ? " sm:grid-cols-[100px_auto] sm:grid-rows-1 grid-rows-[auto_80px] col" : ""}`}
+      className={`w-screen overflow-y-scroll hide-scrollbar grid ${
+        showNav
+          ? " sm:grid-cols-[100px_auto] sm:grid-rows-1 grid-rows-[auto_80px] col"
+          : ""
+      }`}
     >
       {showNav && <NavComponent />}
       <div

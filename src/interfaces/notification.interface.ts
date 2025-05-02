@@ -1,12 +1,5 @@
-import { TransactionTypeEnum } from "./wallet.interface";
-
 export enum NotificationCategoryEnum {
-  POINT_EARNED = "POINT_EARNED",
-  POINT_SPENT = "POINT_SPENT",
-  REFERRAL = "referral",
-  ORDER = "ORDER",
-  THREAD = "THREAD",
-  COUPON = "COUPON",
+  CHAT = "CHAT",
   SYSTEM = "system",
 }
 
@@ -17,10 +10,5 @@ export interface INotification {
   category: NotificationCategoryEnum;
   hasRead: boolean;
   createdAt: Date;
-  payload?: {
-    amount: number;
-    id?: string;
-    transactionCategory: string;
-    transactionType: TransactionTypeEnum;
-  };
+  payload?: any;
 }

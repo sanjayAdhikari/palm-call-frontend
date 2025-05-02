@@ -21,6 +21,7 @@ import {
 import {
   IoAddOutline,
   IoArrowBack,
+  IoCall,
   IoCaretDown,
   IoClose,
   IoEye,
@@ -31,6 +32,7 @@ import {
   IoPrint,
   IoReceiptOutline,
   IoSearch,
+  IoVideocam,
 } from "react-icons/io5";
 import { LiaShoppingCartSolid } from "react-icons/lia";
 import { LuBox, LuDownload } from "react-icons/lu";
@@ -60,6 +62,10 @@ import { VscSettings } from "react-icons/vsc";
 
 export function getIconsHandler(iconType: AppIconType): IconType {
   switch (iconType) {
+    case AppIconType.AUDIO_CALL:
+      return IoCall;
+    case AppIconType.VIDEO_CALL:
+      return IoVideocam;
     case AppIconType.EYE:
       return IoEye;
     case AppIconType.EYE_OFF:
