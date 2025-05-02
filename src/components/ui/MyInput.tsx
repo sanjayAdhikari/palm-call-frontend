@@ -6,7 +6,14 @@ import moment from "moment";
 import React from "react";
 import { IInput } from "./ui.interface";
 
-function MyInput({ isRequired, label, inputType, onChange, ...props }: IInput) {
+function MyInput({
+  isRequired,
+  label,
+  inputType,
+  onChange,
+  onKeyDown,
+  ...props
+}: IInput) {
   const [field, meta, helpers] = useField(props);
   const isError = meta.touched && typeof meta?.error === "string";
 
@@ -87,7 +94,9 @@ function MyInput({ isRequired, label, inputType, onChange, ...props }: IInput) {
         return (
           <Input.TextArea
             {...field}
-            {...props}
+            onKeyDown={(value) => {
+              typeof onChange == "function" && onChange(value);
+            }}
             className={props?.className || "bg-transparent"}
             status={isError ? "error" : undefined}
             size={inputSize}

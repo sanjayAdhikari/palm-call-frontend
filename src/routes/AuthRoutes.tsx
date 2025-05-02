@@ -80,7 +80,7 @@ function PrivateRouteComponent() {
 
       const token = await requestFCMPermission();
       if (token) {
-        await potApi("/api/v1/user/fcm", {
+        await postApi("/api/v1/user/fcm", {
           token,
         });
       }

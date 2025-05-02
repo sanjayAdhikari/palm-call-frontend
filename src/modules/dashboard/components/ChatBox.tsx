@@ -163,7 +163,7 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
     scrollToBottom();
   };
 
-  const handleTyping = (val: string) => {
+  const handleTyping = (val: any) => {
     if (val.trim()) {
       if (!isTyping) {
         sendTyping(thread._id, true);

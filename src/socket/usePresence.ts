@@ -9,7 +9,9 @@ export const usePresence = (userId: string) => {
       setIsOnline(getPresence(userId));
     };
     const unsubscribe = subscribeToPresence(update);
-    return unsubscribe;
+    return () => {
+      unsubscribe(); // ensure return type is void
+    };
   }, [userId]);
 
   return isOnline;

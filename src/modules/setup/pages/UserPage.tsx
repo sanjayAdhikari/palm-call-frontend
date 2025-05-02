@@ -30,7 +30,7 @@ function UserPage() {
     {
       title: "Name",
       render: (value, record) => {
-        return <UserProfileCard name={record?.customer?.name} />;
+        return <UserProfileCard user={record?.customer} />;
       },
     },
     {
