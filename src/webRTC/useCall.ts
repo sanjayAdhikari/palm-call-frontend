@@ -1,14 +1,13 @@
 import { IUser, SocketEventEnum } from "interfaces";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { getSocket } from "../socket/socketClient";
 import Emitter from "./Emitter";
 import { WebRTCCallContext } from "./WebRTCCallProvider";
 
 export const useCall = () => {
-  const { isCalling, isReceiving, callType, callerId, setState } =
+  const { isCalling, isReceiving, callType, callerId, callerInfo, setState } =
     useContext(WebRTCCallContext);
 
-  const [callerInfo, setCallerInfo] = useState<IUser | null>(null);
   const socket = getSocket();
 
   const startCall = (to: string, type: "audio" | "video", callee: IUser) => {
@@ -17,8 +16,8 @@ export const useCall = () => {
       isCalling: true,
       callType: type,
       callerId: to,
+      callerInfo: callee,
     }));
-    setCallerInfo(callee); // 👈 set callee info for initiator
     Emitter.emit("call:start", { to, type });
   };
 
@@ -49,8 +48,8 @@ export const useCall = () => {
       isReceiving: false,
       callType: null,
       callerId: null,
+      callerInfo: nul,
     });
-    setCallerInfo(null);
   };
 
   const isInCall = isCalling && !isReceiving;
@@ -63,7 +62,11 @@ export const useCall = () => {
       from: IUser;
       type: "audio" | "video";
     }) => {
-      setCallerInfo(from); // 👈 treat 'from' as IUser
+      setState((prev) => ({
+        ...prev,
+        callerInfo: from,
+        callType: type,
+      })); // 👈 treat 'from' as IUser
     };
 
     const handleEnd = () => {

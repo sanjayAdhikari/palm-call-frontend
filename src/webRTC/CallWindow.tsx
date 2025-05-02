@@ -5,6 +5,7 @@ import { useCall } from "./useCall";
 
 const CallWindow: React.FC = () => {
   const { endCall, isReceiving, isCalling, callerInfo } = useCall();
+  console.log("callerInfo", callerInfo);
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
 
