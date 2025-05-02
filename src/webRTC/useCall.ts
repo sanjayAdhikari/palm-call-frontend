@@ -48,7 +48,7 @@ export const useCall = () => {
       isReceiving: false,
       callType: null,
       callerId: null,
-      callerInfo: nul,
+      callerInfo: null,
     });
   };
 

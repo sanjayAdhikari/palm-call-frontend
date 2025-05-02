@@ -1,7 +1,7 @@
 import { PageTemplate } from "components";
 import { PageLinks } from "constant";
 import { useAuthorization, useScreenSize } from "hooks";
-import { IUser, QueryNames, SocketEventEnum, UserType } from "interfaces";
+import { IUser, QueryNames, SocketEventEnum } from "interfaces";
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -21,7 +21,6 @@ function SupportChatPage() {
   const { currentRole, currentUserId } = useAuthorization();
   const isSmScreen = useScreenSize().isSmScreen;
   const activityId = query.get(QueryNames.ID);
-  const isUser = currentRole === UserType.USER;
 
   const [isOtherTyping, setIsOtherTyping] = useState(false);
 

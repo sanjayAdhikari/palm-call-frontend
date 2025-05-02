@@ -1,9 +1,9 @@
-import React, { Suspense } from "react";
 import { Layout, MyLoader } from "components";
+import AppContext from "context";
+import React, { Suspense } from "react";
 import { AuthRoute } from "routes";
 import "./index.css";
 import "antd/dist/reset.css";
-import AppContext from "context";
 import Init from "./init";
 
 const App = () => {

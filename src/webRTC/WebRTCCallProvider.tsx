@@ -53,7 +53,6 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
     }) => {
       mediaRef.current = new MediaDevice();
       const local = await mediaRef.current.start(type);
-      // 🔥 Emit your local stream immediately
       Emitter.emit("call:streams", { local, remote: new MediaStream() });
 
       peerRef.current = new PeerConnection({

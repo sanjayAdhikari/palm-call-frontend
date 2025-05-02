@@ -2,7 +2,7 @@ import { MyButton, MyInput } from "components";
 import { ApiUrl } from "constant";
 import { Form, Formik, FormikHelpers } from "formik";
 import { useAuthorization } from "hooks";
-import { AppIconType, ISupportThread } from "interfaces";
+import { AppIconType, ISupportThread, SocketEventEnum } from "interfaces";
 import moment from "moment";
 import React, {
   useCallback,
@@ -13,7 +13,11 @@ import React, {
 } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { Api } from "services";
-import { sendMessageViaSocket, sendTyping } from "../../../socket/socketClient";
+import {
+  getSocket,
+  sendMessageViaSocket,
+  sendTyping,
+} from "../../../socket/socketClient";
 import { ChatContext } from "../context";
 
 const ChatBox = ({ thread }: { thread: ISupportThread }) => {
@@ -66,7 +70,7 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
 
         setTimeout(() => {
           if (pageToLoad === 1) {
-            scrollToBottom(); // 🔥 Initial page load
+            scrollToBottom();
           } else {
             const newHeight = scrollContainer?.scrollHeight ?? 0;
             const diff = newHeight - prevHeight;
@@ -87,6 +91,21 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
     setPage(1);
     setHasMore(true);
     loadMessages(1);
+
+    const socket = getSocket();
+
+    const handleMessage = (msg: any) => {
+      console.log("msg", msg);
+      if (msg?.thread !== thread._id) return; // guard
+      setMessages((prev) => [...prev, msg]);
+      scrollToBottom();
+    };
+
+    socket.on(SocketEventEnum.MESSAGE, handleMessage);
+
+    return () => {
+      socket.off(SocketEventEnum.MESSAGE, handleMessage);
+    };
   }, [thread?._id]);
 
   useEffect(() => {
@@ -141,7 +160,7 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
     setMessages((prev) => [...prev, newMessage]);
     helpers.resetForm();
     sendMessageViaSocket(thread._id, messageText);
-    scrollToBottom(); // 🔥 scroll after sending message
+    scrollToBottom();
   };
 
   const handleTyping = (val: string) => {

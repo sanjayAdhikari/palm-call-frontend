@@ -2,7 +2,8 @@ import { NotFoundComponent } from "components";
 import { PageLinks } from "constant";
 import { useAppContext } from "context";
 import { AnimatePresence } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { IoNotifications } from "react-icons/io5";
 import {
   Navigate,
   Outlet,
@@ -11,6 +12,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Api } from "services";
+import { onFCMMessage, requestFCMPermission } from "../firebase/fcm";
 
 import { AuthenticationRoute, DashboardRoute, SetupRoute } from "../modules";
 import CallModal from "../webRTC/CallModal";
@@ -37,9 +41,58 @@ export default function AuthRoute() {
 
 function PrivateRouteComponent() {
   const { isAuthenticated, isAuthenticating } = useAppContext();
-  // useSocketLifecycle();
 
-  const { pathname } = useLocation();
+  const { postApi } = Api();
+
+  const isRequestingRef = useRef(false);
+
+  useEffect(() => {
+    let toastID;
+    if (isAuthenticated) {
+      if (Notification.permission === "default") {
+        toastID = toast.info("Click here to enable notifications", {
+          autoClose: false,
+          closeOnClick: false,
+          onClick: async () => {
+            const token = await syncFCMToken();
+            if (token) {
+              toast.dismiss(toastID);
+              toast.success("Notifications enabled!");
+            }
+          },
+        });
+      }
+
+      onFCMMessage((payload) => {
+        toast.info(
+          `${payload?.notification?.title}: ${payload?.notification?.body}`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            icon: IoNotifications,
+          },
+        );
+      });
+    }
+    const syncFCMToken = async () => {
+      if (isRequestingRef.current) return;
+      isRequestingRef.current = true;
+
+      const token = await requestFCMPermission();
+      if (token) {
+        await potApi("/api/v1/user/fcm", {
+          token,
+        });
+      }
+      return token;
+    };
+
+    return () => {
+      if (toastID) {
+        toast.dismiss(toastID);
+      }
+    };
+  }, [isAuthenticated]);
 
   const canAccess = isAuthenticated;
   if (isAuthenticating) return <></>;

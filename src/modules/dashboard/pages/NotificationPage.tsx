@@ -67,27 +67,19 @@ const NotificationCard = ({ details }: { details: INotification }) => {
         return getIconsHandler(AppIconType.SUPPORT);
     }
   })();
+  const { goToChatDetails } = useQueryParams();
 
 
   const onRedirectHandler = () => {
-    // switch (details?.category) {
-    //   case NotificationCategoryEnum.ORDER:
-    //     return goToActivityDetails(details?.payload?.id);
-    //   case NotificationCategoryEnum.THREAD:
-    //     return goToSupportDetails({ thread: details?.payload?.id });
-    //   case NotificationCategoryEnum.POINT_SPENT:
-    //   case NotificationCategoryEnum.POINT_EARNED:
-    //     return navigate(
-    //       PageLinks.wallet.transactionDetails(details?.payload?.id),
-    //     );
-    //   case NotificationCategoryEnum.REFERRAL:
-    //     return navigate(PageLinks.referral.list);
-    //   default:
-    //     return;
-    // }
+    switch (details?.category) {
+      case NotificationCategoryEnum.CHAT:
+        return goToChatDetails(details?.payload?.threadID);
+      default:
+        return;
+    }
   };
 
-  const canRedirect = !!details?.payload?.id;
+  const canRedirect = !!details?.payload?.threadID;
 
   return (
     <div
