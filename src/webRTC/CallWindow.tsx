@@ -4,7 +4,7 @@ import Emitter from "./Emitter";
 import { useCall } from "./useCall";
 
 const CallWindow: React.FC = () => {
-  const { endCall, isReceiving, isCalling, callerInfo } = useCall();
+  const { endCall, isReceiving, isCalling, callerInfo, callType } = useCall();
   console.log("callerInfo", callerInfo);
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
@@ -86,12 +86,14 @@ const CallWindow: React.FC = () => {
           >
             {isMicMuted ? <MicOff size={20} /> : <Mic size={20} />}
           </button>
-          <button
-            onClick={toggleVideo}
-            className="bg-indigo-500 p-2 rounded-full text-white"
-          >
-            {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
-          </button>
+          {callType === "video" && (
+            <button
+              onClick={toggleVideo}
+              className="bg-indigo-500 p-2 rounded-full text-white"
+            >
+              {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
+            </button>
+          )}
           <button
             onClick={endCall}
             className="bg-red-600 p-2 rounded-full text-white"
