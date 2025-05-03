@@ -207,14 +207,6 @@ const ChatBox = ({ thread }: { thread: ISupportThread }) => {
               </div>
               <div className="text-xs text-gray-400 flex items-center gap-2">
                 {moment(msg.createdAt).format("DD MMM hh:mm A")}
-                {isMine && (
-                  <span
-                    onClick={() => handleDelete(msg._id)}
-                    className="cursor-pointer"
-                  >
-                    Delete
-                  </span>
-                )}
               </div>
             </div>
           );
