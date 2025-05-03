@@ -1,5 +1,5 @@
-import { MyButton, MyMoreOption } from "components";
-import { AppIconType, IUser, SupportChatStatusEnum } from "interfaces";
+import { MyButton } from "components";
+import { AppIconType, IUser } from "interfaces";
 import { useCall } from "../../../webRTC/useCall";
 
 const ChatMoreOptions = ({ participant }: { participant: IUser }) => {
@@ -23,14 +23,6 @@ const ChatMoreOptions = ({ participant }: { participant: IUser }) => {
           }
         />
       </div>
-      <MyMoreOption
-        items={[SupportChatStatusEnum.COMPLETED].map((status) => ({
-          label: status,
-          onClick: async () => {
-            // Your toggleVisibility logic here
-          },
-        }))}
-      />
     </div>
   );
 };
