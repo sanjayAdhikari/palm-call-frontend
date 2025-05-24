@@ -1,12 +1,12 @@
-import React from "react";
-import { NavLink, PageLinks } from "constant";
-import { getIconsHandler } from "utils";
-import { NavLink as RouterNavLink, useNavigate } from "react-router-dom";
-import { useAuthorization, useScreenSize } from "hooks";
+import { Popover } from "antd";
 import Logo from "assets/logo.jpg";
 import { NavProfileContent } from "components";
-import { Popover } from "antd";
+import { NavLink, PageLinks } from "constant";
+import { useAuthorization, useScreenSize } from "hooks";
 import { AppIconType } from "interfaces";
+import React from "react";
+import { NavLink as RouterNavLink, useNavigate } from "react-router-dom";
+import { getIconsHandler } from "utils";
 
 function NavComponent() {
   const { canAccess } = useAuthorization();
@@ -51,7 +51,9 @@ function NavComponent() {
                       className={`flex flex-col gap-1 items-center text-center transition-all`}
                     >
                       <div
-                        className={`p-2 ${isActive ? "bg-ash-200  rounded-xl" : ""} text-gray-500`}
+                        className={`p-2 ${
+                          isActive ? "bg-ash-200  rounded-xl" : ""
+                        } text-gray-500`}
                       >
                         <Icon className={"text-[24px] "} />
                       </div>

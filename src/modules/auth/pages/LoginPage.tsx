@@ -74,7 +74,9 @@ function LoginPage() {
               className="absolute top-0 left-0 h-full w-1/2 bg-white rounded-full shadow transition-transform duration-300 ease-in-out"
               style={{
                 transform:
-                  userType === UserType.USER ? "translateX(0)" : "translateX(100%)",
+                  userType === UserType.USER
+                    ? "translateX(0)"
+                    : "translateX(100%)",
               }}
             />
             {[

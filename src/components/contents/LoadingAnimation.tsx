@@ -1,5 +1,5 @@
-import React from "react";
 import HyreLoading from "assets/hyreLoading.webm";
+import React from "react";
 
 function LoadingAnimation() {
   return (

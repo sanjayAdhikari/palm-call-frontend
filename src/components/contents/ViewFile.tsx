@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
 import { Image } from "antd";
 import { useApiManager } from "hooks";
+import React, { useCallback, useEffect, useState } from "react";
 
 interface ViewFileProps {
   name: string[];

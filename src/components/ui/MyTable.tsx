@@ -1,7 +1,8 @@
-import React from "react";
-import { ITableColumns } from "interfaces";
 import { Pagination, Table } from "antd";
 import { PAGE_SIZE } from "constant";
+import { ITableColumns } from "interfaces";
+import React from "react";
+
 interface IProps {
   columns: ITableColumns<any>[];
   data: any[];
@@ -14,6 +15,7 @@ interface IProps {
     onChange: (page: number) => void;
   };
 }
+
 function MyTable({
   columns,
   data,

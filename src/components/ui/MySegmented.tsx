@@ -1,11 +1,13 @@
-import React from "react";
 import { Segmented } from "antd";
+import React from "react";
 
 interface ISegmented {
   activeTab: string;
-  setActiveTab(value: string): void;
   tabs: { label: string | React.ReactNode; key: string }[];
+
+  setActiveTab(value: string): void;
 }
+
 function MySegmented({ activeTab, tabs, setActiveTab }: ISegmented) {
   return (
     <Segmented

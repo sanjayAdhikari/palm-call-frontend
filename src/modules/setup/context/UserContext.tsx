@@ -1,12 +1,12 @@
-import { createContext } from "react";
+import { ApiUrl } from "constant";
+import { useContextData } from "hooks";
 import {
   IAdminUser,
   ICallbackFunction,
   IContext,
   IPaginateData,
 } from "interfaces";
-import { useContextData } from "hooks";
-import { ApiUrl } from "constant";
+import { createContext } from "react";
 
 export const UserContext = createContext<
   IContext<IPaginateData<IAdminUser>, IAdminUser>

@@ -1,6 +1,6 @@
-import React from "react";
-import { UserType } from "interfaces";
 import { useAuthorization } from "hooks";
+import { UserType } from "interfaces";
+import React from "react";
 
 function AccessComponent({
   accessBy,

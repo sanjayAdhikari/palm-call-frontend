@@ -1,7 +1,7 @@
-import React from "react";
-import { getIconsHandler } from "utils";
 import { AppIconType, QueryNames } from "interfaces";
+import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { getIconsHandler } from "utils";
 
 interface IProps {
   title?: any;
@@ -14,6 +14,7 @@ interface IProps {
   isMobileView?: boolean;
   transparentPage?: boolean;
 }
+
 function PageTemplate({
   titleRightChildren,
   title,
@@ -26,7 +27,9 @@ function PageTemplate({
   const BackIcon = getIconsHandler(AppIconType.BACK);
   return (
     <div
-      className={`flex flex-col h-full pt-5  px-5 gap-5 overflow-scroll hide-scrollbar ${transparentPage ? "bg-transparent" : "bg-white"} rounded-3xl`}
+      className={`flex flex-col h-full pt-5  px-5 gap-5 overflow-scroll hide-scrollbar ${
+        transparentPage ? "bg-transparent" : "bg-white"
+      } rounded-3xl`}
     >
       {(title || backLink) && (
         <div className={"flex items-center justify-between select-none"}>
@@ -65,7 +68,9 @@ const ActiveInactiveSwitchComponent = () => {
       }
     >
       <div
-        className={`${!isInactive ? "bg-white shadow-sm" : ""} px-2 py-1 rounded-md `}
+        className={`${
+          !isInactive ? "bg-white shadow-sm" : ""
+        } px-2 py-1 rounded-md `}
         onClick={() => {
           query.set(QueryNames.INACTIVE, "0");
           setQuery(query);
@@ -74,7 +79,9 @@ const ActiveInactiveSwitchComponent = () => {
         Active
       </div>
       <div
-        className={`${isInactive ? "bg-white shadow-sm" : ""} px-2 py-1 rounded-md `}
+        className={`${
+          isInactive ? "bg-white shadow-sm" : ""
+        } px-2 py-1 rounded-md `}
         onClick={() => {
           query.set(QueryNames.INACTIVE, "1");
           setQuery(query);

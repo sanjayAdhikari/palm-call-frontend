@@ -73,6 +73,7 @@ export enum QueryNames {
   THREAD_ID = "thread_id",
   RETURN_URL = "returnUrl",
 }
+
 export enum ParamsNames {
   "HASH" = "HASH",
   "ID" = "ID",
@@ -107,5 +108,5 @@ export enum SocketEventEnum {
   ERROR = "error",
   DISCONNECT = "disconnect",
   CONNECT = "connect",
+  USER_SPEAKING = "USER_SPEAKING",
 }
-

@@ -69,7 +69,6 @@ const NotificationCard = ({ details }: { details: INotification }) => {
   })();
   const { goToChatDetails } = useQueryParams();
 
-
   const onRedirectHandler = () => {
     switch (details?.category) {
       case NotificationCategoryEnum.CHAT:
@@ -84,7 +83,9 @@ const NotificationCard = ({ details }: { details: INotification }) => {
   return (
     <div
       onClick={canRedirect ? onRedirectHandler : undefined}
-      className={`px-4 py-2 rounded-3xl ${canRedirect ? "hover:bg-gray-50 cursor-pointer" : ""}
+      className={`px-4 py-2 rounded-3xl ${
+        canRedirect ? "hover:bg-gray-50 cursor-pointer" : ""
+      }
       `}
     >
       <div className="flex items-start gap-4">

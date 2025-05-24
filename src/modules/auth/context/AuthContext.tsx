@@ -13,6 +13,7 @@ interface AuthContext {
 export const AuthContext = createContext<AuthContext>({
   async loginHandler(payload, cb) {},
 });
+
 function AuthContextProvider() {
   const {
     handler: { setLoading, setError, getCurrentHandler },

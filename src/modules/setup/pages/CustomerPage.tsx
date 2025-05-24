@@ -8,6 +8,7 @@ import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Api } from "services";
 import { getIconsHandler, getSerialNumber } from "utils";
+import GlobalAudioCall from "../../audio_call/GroupChat";
 import { ChatContext } from "../../dashboard/context";
 
 function CustomerPage() {
@@ -110,6 +111,7 @@ function CustomerPage() {
       <div className={"flex flex-col"}>
         <div className={"mb-10 flex items-center justify-between"}>
           <div className={"flex items-center gap-4"}>
+            <GlobalAudioCall />
             <div className={"font-bold text-lg"}>Customers</div>
           </div>
           <div

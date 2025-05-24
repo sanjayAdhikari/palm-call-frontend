@@ -1,11 +1,12 @@
-import { createContext } from "react";
-import { ICallbackFunction } from "interfaces";
-import { useContextData } from "hooks";
 import { ApiUrl } from "constant";
+import { useContextData } from "hooks";
+import { ICallbackFunction } from "interfaces";
+import { createContext } from "react";
 
 interface IUtilityContext {
   editMyProfileHandler(payload: any, cb: ICallbackFunction): Promise<void>;
 }
+
 export const UtilityContext = createContext<IUtilityContext>({
   async editMyProfileHandler(payload, cb) {},
 });

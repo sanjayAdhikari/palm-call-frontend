@@ -1,12 +1,12 @@
-import { createContext } from "react";
+import { ApiUrl } from "constant";
+import { useContextData } from "hooks";
 import {
   ICallbackFunction,
   IContext,
   INotification,
   IPaginateData,
 } from "interfaces";
-import { useContextData } from "hooks";
-import { ApiUrl } from "constant";
+import { createContext } from "react";
 
 interface INotificationContext
   extends IContext<IPaginateData<INotification>, INotification> {
@@ -16,6 +16,7 @@ interface INotificationContext
     cb: ICallbackFunction,
   ): Promise<void>;
 }
+
 export const NotificationContext = createContext<INotificationContext>({
   isLoading: false,
   lists: undefined,

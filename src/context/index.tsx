@@ -18,9 +18,4 @@ export default function AppContext({ children }) {
   );
 }
 
-export {
-  useAppContext,
-  CustomerContext,
-  UtilityContext,
-  NotificationContext,
-};
+export { useAppContext, CustomerContext, UtilityContext, NotificationContext };

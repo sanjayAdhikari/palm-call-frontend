@@ -1,12 +1,14 @@
-import React from "react";
 import { Tabs } from "antd";
+import React from "react";
 
 interface MyTabProps {
   tabBarExtraContent?: React.ReactNode;
   activeTab: string;
-  setActiveTab(value: string): void;
   tabs: { label: string | React.ReactNode; key: string }[];
+
+  setActiveTab(value: string): void;
 }
+
 function MyTab({
   activeTab,
   tabs,

@@ -1,8 +1,9 @@
-import React from "react";
 import type { ModalProps } from "antd";
 import { Modal } from "antd";
+import React from "react";
 
 interface IProps extends ModalProps {}
+
 function MyModal({ title, children, onCancel, width }: IProps) {
   return (
     <Modal

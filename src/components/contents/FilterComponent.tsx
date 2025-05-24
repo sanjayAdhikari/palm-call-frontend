@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import { Form, Formik } from "formik";
-import moment from "moment";
 import { Popover } from "antd";
 import { MyButton, MyInput } from "components";
-import { AppIconType, QueryNames } from "interfaces";
-import { useSearchParams } from "react-router-dom";
+import { Form, Formik } from "formik";
 import { useQueryParams } from "hooks";
+import { AppIconType, QueryNames } from "interfaces";
+import moment from "moment";
+import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 
 interface IFilterValues {
   from: string;
   to: string;
 }
+
 interface IFilter {
   onSubmitCB?: (query?: IFilterValues) => void;
 }
+
 function FilterComponent({ onSubmitCB }: IFilter) {
   const [isOpen, setOpen] = useState(false);
   const [query, setQuery] = useSearchParams();
@@ -88,7 +90,11 @@ function FilterComponent({ onSubmitCB }: IFilter) {
                       await submitForm();
                     }}
                     key={key}
-                    className={`p-2 rounded-md text-xs ${isSelected ? "bg-success text-white" : "bg-ash-100 text-black"}`}
+                    className={`p-2 rounded-md text-xs ${
+                      isSelected
+                        ? "bg-success text-white"
+                        : "bg-ash-100 text-black"
+                    }`}
                   >
                     {date?.name}
                   </button>

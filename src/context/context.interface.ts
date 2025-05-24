@@ -15,7 +15,6 @@ export interface IAppState {
   };
 }
 
-
 export interface IAppContext extends IAppState {
   handler: {
     setLoading(state: boolean): void;

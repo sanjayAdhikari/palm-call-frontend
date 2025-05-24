@@ -1,8 +1,8 @@
-import React from "react";
 import EmptyImage from "assets/fileSearch.svg";
 import { MyButton } from "components";
-import { useNavigate } from "react-router-dom";
 import { AppIconType } from "interfaces";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function EmptyMessageComponent({
   message,

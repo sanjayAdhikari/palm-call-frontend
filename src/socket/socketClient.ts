@@ -12,11 +12,15 @@ export const leaveThread = (threadId: string) => {
   getSocket().emit(SocketEventEnum.LEAVE_THREAD, { threadId });
 };
 
-export const initSocket = (token: string): Socket => {
+export const initSocket = (
+  token: string,
+  query: Record<string, string> = { meetingId: "GLOBAL" },
+): Socket => {
   if (socket && socket.connected) return socket;
 
   socket = io(import.meta.env.VITE_API_URL as string, {
     auth: { token },
+    query,
     transports: ["websocket"],
     reconnection: true,
   });

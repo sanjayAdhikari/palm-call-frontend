@@ -1,5 +1,5 @@
-import { getIconsHandler } from "utils";
 import { AppIconType } from "interfaces";
+import { getIconsHandler } from "utils";
 
 export const UserIconPlaceholder = () => {
   const UserIcon = getIconsHandler(AppIconType.USER);

@@ -1,9 +1,10 @@
 import type { FieldConfig } from "formik";
-import React from "react";
 import { ISelectOption } from "interfaces";
-import { boolean } from "yup";
+import React from "react";
+
 export type SizeType = "small" | "middle" | "large";
 type FormikInputType = React.InputHTMLAttributes<any> & FieldConfig<any>;
+
 export interface IInput extends FormikInputType {
   label?: string;
   isRequired?: boolean;
@@ -28,7 +29,7 @@ export interface IInput extends FormikInputType {
     | "checkbox";
   options?: ISelectOption[];
   addonAfter?: string;
-  disabled?: boolean,
+  disabled?: boolean;
   radioOptions?: { label: string; value: any }[];
 }
 

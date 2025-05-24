@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
 import { MyButton, MyFile, MyInput, MyModal } from "components";
-import { Form, Formik } from "formik";
 import { useAppContext, UtilityContext } from "context";
+import { Form, Formik } from "formik";
+import React, { useContext } from "react";
 import * as yup from "yup";
 
 function EditUserProfile({ onClose }: { onClose: any }) {
@@ -24,7 +24,7 @@ function EditUserProfile({ onClose }: { onClose: any }) {
         enableReinitialize
         initialValues={{
           profileImage: userDetails?.profileImage,
-          name: userDetails?.name??"",
+          name: userDetails?.name ?? "",
         }}
         validationSchema={yup.object().shape({
           name: yup.string().required(" "),

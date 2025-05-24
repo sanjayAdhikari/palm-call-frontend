@@ -49,19 +49,19 @@ function PrivateRouteComponent() {
   useEffect(() => {
     let toastID;
     if (isAuthenticated) {
-      if (Notification.permission === "default") {
-        toastID = toast.info("Click here to enable notifications", {
-          autoClose: false,
-          closeOnClick: false,
-          onClick: async () => {
-            const token = await syncFCMToken();
-            if (token) {
-              toast.dismiss(toastID);
-              toast.success("Notifications enabled!");
-            }
-          },
-        });
-      }
+      // if (Notification.permission === "default") {
+      //   toastID = toast.info("Click here to enable notifications", {
+      //     autoClose: false,
+      //     closeOnClick: false,
+      //     onClick: async () => {
+      //       const token = await syncFCMToken();
+      //       if (token) {
+      //         toast.dismiss(toastID);
+      //         toast.success("Notifications enabled!");
+      //       }
+      //     },
+      //   });
+      // }
 
       onFCMMessage((payload) => {
         toast.info(

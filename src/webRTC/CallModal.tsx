@@ -2,15 +2,17 @@ import { ViewFile } from "components";
 import { useCall } from "./useCall";
 
 const CallModal = () => {
-  const { isReceiving, callType, callerInfo, acceptCall, rejectCall } =
+  const { isReceiving, incomingCall, callerInfo, acceptCall, rejectCall } =
     useCall();
 
-  if (!isReceiving) return null;
+  if (!isReceiving || !incomingCall) return null;
+
+  const { type } = incomingCall;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-6 w-[320px] text-center shadow-xl">
-        {callType === "audio" && callerInfo?.profileImage && (
+        {type === "audio" && callerInfo?.profileImage && (
           <ViewFile
             name={[callerInfo.profileImage]}
             canPreview={false}
@@ -19,8 +21,8 @@ const CallModal = () => {
         )}
 
         <p className="mb-2 text-lg font-semibold">
-          Incoming {callType} call from{" "}
-          <span className="text-blue-600">{callerInfo?.name ?? "Unknown"}</span>
+          Incoming {type} call from{" "}
+          <span className="text-blue-600">{callerInfo?.name ?? "Someone"}</span>
         </p>
 
         <div className="flex justify-center gap-4 mt-4">

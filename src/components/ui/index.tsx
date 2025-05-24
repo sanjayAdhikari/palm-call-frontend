@@ -1,12 +1,12 @@
 import MyButton from "./MyButton";
-import MyTab from "./MyTab";
+import MyFile from "./MyFile";
 import MyInput from "./MyInput";
-import MyMoreOption from "./MyMoreOption";
-import MyTable from "./MyTable";
 import MyLoader from "./MyLoader";
 import MyModal from "./MyModal";
-import MyFile from "./MyFile";
+import MyMoreOption from "./MyMoreOption";
 import MySegmented from "./MySegmented";
+import MyTab from "./MyTab";
+import MyTable from "./MyTable";
 
 export {
   MyModal,

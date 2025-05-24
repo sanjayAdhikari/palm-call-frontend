@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useAppContext } from "context";
-import { Api } from "services";
-import { ICallbackFunction, IGetApiQuery } from "interfaces";
 import { PAGE_SIZE } from "constant";
+import { useAppContext } from "context";
+import { ICallbackFunction, IGetApiQuery } from "interfaces";
+import { useState } from "react";
+import { Api } from "services";
 
 function UseContextData() {
   const {

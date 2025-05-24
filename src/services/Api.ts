@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "configs"; // Importing the API configuration
-import { getAccessToken, getRefreshToken } from "utils"; // Importing the utility function to retrieve the authentication token
+import { getAccessToken } from "utils"; // Importing the utility function to retrieve the authentication token
 
 /**
  * API Utility Class for managing HTTP requests with Axios.
@@ -42,8 +42,8 @@ function Api() {
     const headers: any = {
       "Content-Type": "application/json", // Set content type as JSON
       Accept: "application/json", // Accept JSON responses
-    }
-    if(tokenType === 'access') {
+    };
+    if (tokenType === "access") {
       headers.Authorization = getAccessToken(); // Add Authorization token in header
     }
     let axiosInstance = axios.create({

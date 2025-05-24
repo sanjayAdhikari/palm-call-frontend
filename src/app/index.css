@@ -7,7 +7,7 @@
     --vh: 100%;
 }
 
-body{
+body {
     @apply font-sans bg-ash-50
 }
 
@@ -37,7 +37,7 @@ body{
 
 
 /*for ant otp*/
-.ant-otp, input{
+.ant-otp, input {
     border-radius: 5px !important;
     border-color: #D8D8D9;
 }

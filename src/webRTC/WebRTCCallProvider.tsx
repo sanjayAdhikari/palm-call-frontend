@@ -1,210 +1,193 @@
-import { IUser, SocketEventEnum } from "interfaces";
+import { SocketEventEnum } from "interfaces";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { getAccessToken } from "utils";
 import { initSocket } from "../socket/socketClient";
 import Emitter from "./Emitter";
+import GroupPeerManager from "./GroupPeerManager";
 import MediaDevice from "./MediaDevice";
-import PeerConnection from "./PeerConnection";
+
+interface CallMetadata {
+  meetingID: string;
+  type: "audio" | "video";
+}
+
+interface CallerInfoInterface {
+  name?: string;
+  profileImage?: string;
+}
 
 interface WebRTCCallContextType {
-  isCalling: boolean;
+  isConnected: boolean;
   isReceiving: boolean;
-  callType: "audio" | "video" | null;
-  callerId: string | null;
-  callerInfo: IUser | null;
-  setState: React.Dispatch<React.SetStateAction<any>>;
+  incomingCall: CallMetadata | null;
+  callerInfo?: CallerInfoInterface;
+  joinCall: () => void;
+  leaveCall: () => void;
+  toggleMic: (enabled: boolean) => void;
+  acceptCall: () => void;
+  rejectCall: () => void;
+  onStreams: (
+    fn: (data: { id: string; stream: MediaStream }) => void,
+  ) => () => void;
+  micLabel?: string | null;
 }
 
 export const WebRTCCallContext = createContext<WebRTCCallContextType>({
-  isCalling: false,
+  isConnected: false,
   isReceiving: false,
-  callType: null,
-  callerId: null,
-  callerInfo: null,
-  setState: () => {},
+  incomingCall: null,
+  joinCall: () => {},
+  leaveCall: () => {},
+  toggleMic: () => {},
+  acceptCall: () => {},
+  rejectCall: () => {},
+  onStreams: () => () => {},
+  callerInfo: {},
+  micLabel: null,
 });
 
 export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const ringtoneRef = useRef<HTMLAudioElement | null>(null);
+  const [isConnected, setConnected] = useState(false);
+  const [incomingCall, setIncomingCall] = useState<CallMetadata | null>(null);
+  const [isReceiving, setReceiving] = useState(false);
+  const [callerInfo, setCallerInfo] = useState<CallerInfoInterface>({});
+  const [micLabel, setMicLabel] = useState<string | null>(null);
 
-  const [state, setState] = useState({
-    isCalling: false,
-    isReceiving: false,
-    callType: null as "audio" | "video" | null,
-    callerId: null as string | null,
-    callerInfo: null,
-  });
-
-  const peerRef = useRef<PeerConnection | null>(null);
+  const socketRef = useRef(
+    initSocket(getAccessToken(), { meetingId: "GLOBAL" }),
+  );
   const mediaRef = useRef<MediaDevice | null>(null);
+  const peerManagerRef = useRef<GroupPeerManager | null>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
 
-  const socket = useRef(initSocket(getAccessToken())).current;
+  const joinCall = async () => {
+    try {
+      console.log("[joinCall] isConnected:", isConnected);
+      if (isConnected) return;
 
-  // Listen to call:start from emitter (initiator)
-  useEffect(() => {
-    const handleStart = async ({
-      to,
-      type,
-    }: {
-      to: string;
-      type: "audio" | "video";
-    }) => {
+      const socket = socketRef.current;
+      peerManagerRef.current = new GroupPeerManager(socket);
       mediaRef.current = new MediaDevice();
-      const local = await mediaRef.current.start(type);
-      Emitter.emit("call:streams", { local, remote: new MediaStream() });
 
-      peerRef.current = new PeerConnection({
-        stream: local,
-        onTrack: (remote) => {
-          Emitter.emit("call:streams", { local, remote });
-        },
-        onCandidate: (candidate) => {
-          socket.emit(SocketEventEnum.ICE_CANDIDATE, {
-            to,
-            candidate,
-          });
-        },
-        onOffer: (offer) => {
-          socket.emit(SocketEventEnum.OFFER, { to, offer, type });
-        },
-        onAnswer: (answer) => {
-          socket.emit(SocketEventEnum.ANSWER, { to, answer });
-        },
+      console.log("[joinCall] Requesting audio stream...");
+      const stream = await mediaRef.current.start("audio");
+      localStreamRef.current = stream;
+
+      console.log("[joinCall] Stream acquired", stream);
+      console.log("[joinCall] Audio tracks: ", stream.getAudioTracks());
+
+      const label = mediaRef.current.getSelectedMicLabel();
+      setMicLabel(label);
+      console.log("[joinCall] Media device in use ->", label);
+
+      const response = await peerManagerRef.current.joinRoom(stream);
+      console.log("[joinCall] Joined room successfully:", response);
+
+      setConnected(true);
+    } catch (err) {
+      console.error("[joinCall] Error while starting call", err);
+    }
+  };
+
+  const leaveCall = () => {
+    console.log("[leaveCall] Cleaning up call...");
+    const socket = socketRef.current;
+
+    socket.emit("call:end", { meetingID: "global-room-abc123" });
+    peerManagerRef.current?.leaveRoom();
+    mediaRef.current?.stop();
+
+    setConnected(false);
+    setIncomingCall(null);
+    setReceiving(false);
+  };
+
+  const toggleMic = (enabled: boolean) => {
+    peerManagerRef.current?.setMicEnabled(enabled);
+    if (localStreamRef.current) {
+      localStreamRef.current.getAudioTracks().forEach((track) => {
+        track.enabled = enabled;
       });
+    }
+  };
 
-      await peerRef.current.createOffer();
-    };
+  const acceptCall = () => {
+    if (!incomingCall) return;
+    joinCall();
+    setReceiving(false);
+    setIncomingCall(null);
+  };
 
-    Emitter.on("call:start", handleStart);
-    return () => {
-      Emitter.off("call:start", handleStart);
-    };
-  }, [socket]);
-
+  const rejectCall = () => {
+    setReceiving(false);
+    setIncomingCall(null);
+  };
 
   useEffect(() => {
-    ringtoneRef.current = new Audio("/ringtone.mp3");
-    ringtoneRef.current.loop = true;
+    const socket = socketRef.current;
 
-    const stopRingtone = () => {
-      ringtoneRef.current?.pause();
-      ringtoneRef.current.currentTime = 0;
+    const handleCallStart = ({
+      meetingID,
+      type,
+      callerInfo,
+      initiatorId,
+    }: any) => {
+      const isCaller = initiatorId && socket.id === initiatorId;
+      if (isCaller) {
+        joinCall();
+      } else {
+        console.log("Incoming group call", meetingID, type);
+        setReceiving(true);
+        setIncomingCall({ meetingID, type });
+        setCallerInfo(callerInfo);
+      }
     };
 
-    Emitter.on("call:accept", stopRingtone);
-    Emitter.on("call:reject", stopRingtone);
-    Emitter.on("call:end", stopRingtone);
+    Emitter.on("call:start", handleCallStart);
+    socket.on("call:start", handleCallStart);
+
+    socket.on(SocketEventEnum.USER_SPEAKING, ({ socketId, isSpeaking }) => {
+      peerManagerRef.current?.handleSpeakingStatus(socketId, isSpeaking);
+    });
+
+    socket.on("call:end", () => {
+      console.log("🔕 Call ended by another participant");
+      leaveCall();
+    });
 
     return () => {
-      Emitter.off("call:accept", stopRingtone);
-      Emitter.off("call:reject", stopRingtone);
-      Emitter.off("call:end", stopRingtone);
+      Emitter.off("call:start", handleCallStart);
+      socket.off("call:start", handleCallStart);
+      socket.off("call:end");
+      socket.off(SocketEventEnum.USER_SPEAKING);
     };
   }, []);
 
-  // Listen to offer from other peer
-  useEffect(() => {
-    socket.on(
-      SocketEventEnum.OFFER,
-      async ({
-        from,
-        offer,
-        type,
-      }: {
-        from: IUser;
-        offer: RTCSessionDescriptionInit;
-        type: "audio" | "video";
-      }) => {
-        setState((prev) => ({
-          ...prev,
-          isReceiving: true,
-          callType: type,
-          callerId: from._id,
-        }));
-        Emitter.emit("call:incoming", { from, type });
-        // Save offer/caller for use after accept
-        ringtoneRef.current?.play();
-        peerRef.current = {
-          offer,
-          caller: from,
-        } as any;
-      },
-    );
-  }, [socket]);
-
-  // Listen for accept
-  useEffect(() => {
-    const handleAccept = async () => {
-      const { offer, caller } = peerRef.current as any;
-      mediaRef.current = new MediaDevice();
-      const local = await mediaRef.current.start(state.callType!);
-
-      // ringtoneRef.current?.pause();
-      // ringtoneRef.current.currentTime = 0;
-
-      const pc = new PeerConnection({
-        stream: local,
-        onTrack: (remote) => {
-          Emitter.emit("call:streams", { local, remote });
-        },
-        onCandidate: (candidate) => {
-          socket.emit(SocketEventEnum.ICE_CANDIDATE, {
-            to: caller._id,
-            candidate,
-          });
-        },
-        onOffer: () => {},
-        onAnswer: (answer) => {
-          socket.emit(SocketEventEnum.ANSWER, {
-            to: caller._id,
-            answer,
-          });
-        },
-      });
-
-      peerRef.current = pc;
-      await pc.setRemoteOffer(offer);
-      await pc.createAnswer();
-    };
-
-    Emitter.on("call:accept", handleAccept);
-    return () => {
-      Emitter.off("call:accept", handleAccept);
-    };
-  }, [state.callType, socket]);
-
-  // Remote answer (received by initiator)
-  useEffect(() => {
-    socket.on(
-      SocketEventEnum.ANSWER,
-      async ({ answer }: { answer: RTCSessionDescriptionInit }) => {
-        await peerRef.current?.setRemoteAnswer(answer);
-      },
-    );
-  }, [socket]);
-
-  // ICE candidate
-  useEffect(() => {
-    socket.on(SocketEventEnum.ICE_CANDIDATE, async ({ candidate }) => {
-      await peerRef.current?.addIceCandidate(candidate);
-    });
-  }, [socket]);
-
-  // End
-  useEffect(() => {
-    socket.on(SocketEventEnum.END, () => {
-      Emitter.emit("call:end");
-      peerRef.current?.close();
-      mediaRef.current?.stop();
-      peerRef.current = null;
-      mediaRef.current = null;
-    });
-  }, [socket]);
+  const onStreams = (
+    fn: (data: { id: string; stream: MediaStream }) => void,
+  ) => {
+    Emitter.on("call:streams:group", fn);
+    return () => Emitter.off("call:streams:group", fn);
+  };
 
   return (
-    <WebRTCCallContext.Provider value={{ ...state, setState }}>
+    <WebRTCCallContext.Provider
+      value={{
+        isConnected,
+        isReceiving,
+        incomingCall,
+        joinCall,
+        leaveCall,
+        toggleMic,
+        acceptCall,
+        rejectCall,
+        onStreams,
+        callerInfo,
+        micLabe,
+      }}
+    >
       {children}
     </WebRTCCallContext.Provider>
   );

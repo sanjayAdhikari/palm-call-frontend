@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
+import { ViewFile } from "components";
+import { useAppContext } from "context";
 import { useField } from "formik";
+import { useApiManager } from "hooks";
+import { AppIconType } from "interfaces";
+import React, { useMemo } from "react";
+import { getIconsHandler } from "utils";
 
 import { IFile } from "./ui.interface";
-import { useAppContext } from "context";
-import { useApiManager } from "hooks";
-import { getIconsHandler } from "utils";
-import { AppIconType } from "interfaces";
-import { ViewFile } from "components";
 
 export default function MyFile({ ...props }: IFile) {
   const [field, meta, helpers] = useField(props);
@@ -85,7 +85,9 @@ export default function MyFile({ ...props }: IFile) {
             />
 
             <div
-              className={`${isError ? "border-red-500 text-red-500" : "text-gray-500"} cursor-pointer flex items-center justify-center w-[120px] h-[120px] border border-dotted bg-gray-50 rounded-md`}
+              className={`${
+                isError ? "border-red-500 text-red-500" : "text-gray-500"
+              } cursor-pointer flex items-center justify-center w-[120px] h-[120px] border border-dotted bg-gray-50 rounded-md`}
             >
               <div className={"flex flex-col items-center"}>
                 <AddIcon className={"text-[2rem] "} />

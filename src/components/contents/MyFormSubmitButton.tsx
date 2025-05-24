@@ -1,6 +1,6 @@
-import React from "react";
 import { MyButton } from "components";
 import { useScreenSize } from "hooks";
+import React from "react";
 
 function MyFormSubmitButton({ label }: { label?: string }) {
   const { isSmScreen } = useScreenSize();

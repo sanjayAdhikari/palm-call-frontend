@@ -1,11 +1,12 @@
-import React from "react";
 import { Dropdown } from "antd";
-import { getIconsHandler } from "utils";
 import { AppIconType } from "interfaces";
+import React from "react";
+import { getIconsHandler } from "utils";
 
 interface MyMoreOption {
   items: { label: string; color?: string; onClick: () => any }[];
 }
+
 function MyMoreOption({ items }: MyMoreOption) {
   const MoreIcon = getIconsHandler(AppIconType.DOTS);
   return (
