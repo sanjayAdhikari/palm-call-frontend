@@ -3,7 +3,6 @@ import { AppIconType, IUser } from "interfaces";
 import { useCall } from "../../../webRTC/useCall";
 
 const ChatMoreOptions = ({ participant }: { participant: IUser }) => {
-  const { startCall } = useCall();
 
   return (
     <div className="flex items-center gap-2">
@@ -11,16 +10,11 @@ const ChatMoreOptions = ({ participant }: { participant: IUser }) => {
         <MyButton
           iconType={AppIconType.AUDIO_CALL}
           variant="text"
-          onClick={() =>
-            startCall(participant._id.toString(), "audio", participant)
-          }
         />
         <MyButton
           iconType={AppIconType.VIDEO_CALL}
           variant="text"
-          onClick={() =>
-            startCall(participant._id.toString(), "video", participant)
-          }
+
         />
       </div>
     </div>
