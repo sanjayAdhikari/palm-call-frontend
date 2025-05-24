@@ -185,7 +185,7 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
         rejectCall,
         onStreams,
         callerInfo,
-        micLabe,
+        micLabel,
       }}
     >
       {children}
