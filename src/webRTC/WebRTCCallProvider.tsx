@@ -145,8 +145,8 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    Emitter.on("call:start", handleCallStart);
-    socket.on("call:start", handleCallStart);
+    Emitter.on(SocketEventEnum.CALL_START, handleCallStart);
+    socket.on(SocketEventEnum.CALL_START, handleCallStart);
 
     socket.on(SocketEventEnum.USER_SPEAKING, ({ socketId, isSpeaking }) => {
       peerManagerRef.current?.handleSpeakingStatus(socketId, isSpeaking);
@@ -158,9 +158,9 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     return () => {
-      Emitter.off("call:start", handleCallStart);
-      socket.off("call:start", handleCallStart);
-      socket.off("call:end");
+      Emitter.off(SocketEventEnum.CALL_START, handleCallStart);
+      socket.off(SocketEventEnum.CALL_START, handleCallStart);
+      socket.off(SocketEventEnum.CALL_END);
       socket.off(SocketEventEnum.USER_SPEAKING);
     };
   }, []);

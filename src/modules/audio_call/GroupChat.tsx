@@ -1,5 +1,5 @@
 import { MyButton } from "components";
-import { AppIconType } from "interfaces";
+import { AppIconType, SocketEventEnum } from "interfaces";
 import { useRef } from "react";
 import { getAccessToken } from "utils";
 import { initSocket } from "../../socket/socketClient";
@@ -9,7 +9,7 @@ const GlobalAudioCall = () => {
   const socketRef = useRef(initSocket(getAccessToken()));
   const handleClick = () => {
     const meetingID = "global-room-abc123"; // dynamic later
-    Emitter.emit("call:start", {
+    Emitter.emit(SocketEventEnum.CALL_START, {
       meetingID,
       type: "audio",
       callerInfo: {

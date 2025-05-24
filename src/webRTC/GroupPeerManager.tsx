@@ -1,3 +1,4 @@
+import { SocketEventEnum } from "interfaces";
 import * as mediasoupClient from "mediasoup-client";
 import { Socket } from "socket.io-client";
 import Emitter from "./Emitter";
@@ -19,8 +20,10 @@ export default class GroupPeerManager {
     try {
       console.log("[GroupPeerManager] Starting joinRoom()");
 
-      this.socket.emit("get-rtp-capabilities");
-      const routerRtpCapabilities = await this.waitForEvent("rtp-capabilities");
+      this.socket.emit(SocketEventEnum.GET_RTP_CAPABILITIES);
+      const routerRtpCapabilities = await this.waitForEvent(
+        SocketEventEnum.GET_RTP_CAPABILITIES,
+      );
       console.log(
         "[GroupPeerManager] RTP Capabilities received",
         routerRtpCapabilities,
@@ -28,11 +31,11 @@ export default class GroupPeerManager {
 
       this.device = new mediasoupClient.Device();
       await this.device.load({ routerRtpCapabilities });
-
+ "device loaded"g('device load;ed', this.device)
       // Step 2: Create send transport
-      this.socket.emit("create-transport");
+      this.socket.emit(SocketEventEnum.CREATE_TRANSPORT);
       const { id, iceParameters, iceCandidates, dtlsParameters } =
-        await this.waitForEvent("transport-created");
+        await this.waitForEvent(SocketEventEnum.CREATE_TRANSPORT);
 
       const sendTransport = this.device.createSendTransport({
         id,
@@ -44,26 +47,28 @@ export default class GroupPeerManager {
         proprietaryConstraints: {},
       });
 
-      sendTransport.on("connect", ({ dtlsParameters }, callback) => {
-        this.socket.emit("connect-transport", { dtlsParameters });
-        this.socket.once("transport-connected", callback);
+      sendTransport.on(SocketEventEnum.CONNECT, ({ dtlsParameters }, callback) => {
+        this.socket.emit(SocketEventEnum.CONNECT_TRANSPORT, { dtlsParameters });
+        this.socket.once(SocketEventEnum.CONNECT_TRANSPORT, callback);
       });
 
-      sendTransport.on("produce", async ({ kind, rtpParameters }, callback) => {
-        this.socket.emit("produce", { kind, rtpParameters });
-        const { id } = await this.waitForEvent("produced");
+      sendTransport.on(SocketEventEnum.PRODUCE, async ({ kind, rtpParameters }, callback) => {
+        this.socket.emit(SocketEventEnum.PRODUCE, { kind, rtpParameters });
+        const { id } = await this.waitForEvent(SocketEventEnum.PRODUCE);
         this.localProducerId = id;
         callback({ id });
       });
 
       const audioTrack = localStream.getAudioTracks()[0];
+      console.log("audioTrack ->", audioTrack);
       if (!audioTrack) throw new Error("No audio track available");
 
       await sendTransport.produce({ track: audioTrack });
 
       // Step 3: Create recv transport
-      this.socket.emit("create-recv-transport");
-      const recvData = await this.waitForEvent("recv-transport-created");
+      this.socket.emit(SocketEventEnum.CREATE_RECV_TRANSPORT);
+      const recvData = await this.waitForEvent(SocketEventEnum.CREATE_RECV_TRANSPORT);
+      console.log("waitForEvent::recvData ->", recvData);
 
       this.recvTransport = this.device.createRecvTransport({
         id: recvData.id,
@@ -72,21 +77,31 @@ export default class GroupPeerManager {
         dtlsParameters: recvData.dtlsParameters,
       });
 
+      let recvConnected = false;
       this.recvTransport.on("connect", ({ dtlsParameters }, callback) => {
-        this.socket.emit("connect-recv-transport", { dtlsParameters });
-        this.socket.once("recv-transport-connected", callback);
+        if (recvConnected) return;
+        recvConnected = true;
+        this.socket.emit(SocketEventEnum.CONNECT_RECV_TRANSPORT, { dtlsParameters });
+        this.socket.once(SocketEventEnum.CREATE_RECV_TRANSPORT, callback);
       });
 
+
       // Step 4: Consume others
-      this.socket.emit("consume", {
+      this.socket.emit(SocketEventEnum.CONSUME, {
         rtpCapabilities: this.device.rtpCapabilities,
       });
 
+      this.socket.off(SocketEventEnum.CONSUME); // remove old
       this.socket.on(
-        "consumed",
+        SocketEventEnum.CONSUME,
         async ({ id, producerId, kind, rtpParameters }) => {
+          console.log("[Client] Received consumed event:", producerId);
           if (!this.recvTransport) return;
 
+          if (this.remoteStreams.has(producerId)) {
+            console.warn("🔁 Already consuming producer:", producerId);
+            return;
+          }
           const consumer = await this.recvTransport.consume({
             id,
             producerId,
@@ -99,6 +114,7 @@ export default class GroupPeerManager {
           Emitter.emit("call:streams:group", { id: producerId, stream });
         },
       );
+      console.log("join Room done-> ", this.localProducerId);
 
       return "joined";
     } catch (err) {
