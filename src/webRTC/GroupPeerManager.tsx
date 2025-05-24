@@ -21,9 +21,7 @@ export default class GroupPeerManager {
       console.log("[GroupPeerManager] Starting joinRoom()");
 
       this.socket.emit(SocketEventEnum.GET_RTP_CAPABILITIES);
-      const routerRtpCapabilities = await this.waitForEvent(
-        SocketEventEnum.GET_RTP_CAPABILITIES,
-      );
+      const routerRtpCapabilities = await this.waitForEvent(SocketEventEnum.GET_RTP_CAPABILITIES);
       console.log(
         "[GroupPeerManager] RTP Capabilities received",
         routerRtpCapabilities,
@@ -31,7 +29,7 @@ export default class GroupPeerManager {
 
       this.device = new mediasoupClient.Device();
       await this.device.load({ routerRtpCapabilities });
- "device loaded"g('device load;ed', this.device)
+      console.log('device loaded', this.device)
       // Step 2: Create send transport
       this.socket.emit(SocketEventEnum.CREATE_TRANSPORT);
       const { id, iceParameters, iceCandidates, dtlsParameters } =
@@ -60,7 +58,7 @@ export default class GroupPeerManager {
       });
 
       const audioTrack = localStream.getAudioTracks()[0];
-      console.log("audioTrack ->", audioTrack);
+      console.log('audioTrack ->', audioTrack)
       if (!audioTrack) throw new Error("No audio track available");
 
       await sendTransport.produce({ track: audioTrack });
@@ -68,7 +66,7 @@ export default class GroupPeerManager {
       // Step 3: Create recv transport
       this.socket.emit(SocketEventEnum.CREATE_RECV_TRANSPORT);
       const recvData = await this.waitForEvent(SocketEventEnum.CREATE_RECV_TRANSPORT);
-      console.log("waitForEvent::recvData ->", recvData);
+      console.log('waitForEvent::recvData ->', recvData)
 
       this.recvTransport = this.device.createRecvTransport({
         id: recvData.id,
@@ -114,7 +112,7 @@ export default class GroupPeerManager {
           Emitter.emit("call:streams:group", { id: producerId, stream });
         },
       );
-      console.log("join Room done-> ", this.localProducerId);
+      console.log('join Room done-> ', this.localProducerId)
 
       return "joined";
     } catch (err) {

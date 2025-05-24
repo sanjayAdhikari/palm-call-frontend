@@ -6,13 +6,7 @@ const RemoteAudioRenderer: React.FC = () => {
   const audioRefs = useRef<Map<string, HTMLAudioElement>>(new Map());
 
   useEffect(() => {
-    const handleStream = ({
-      id,
-      stream,
-    }: {
-      id: string;
-      stream: MediaStream;
-    }) => {
+    const handleStream = ({ id, stream }: { id: string; stream: MediaStream }) => {
       let audio = audioRefs.current.get(id);
 
       if (!audio) {
