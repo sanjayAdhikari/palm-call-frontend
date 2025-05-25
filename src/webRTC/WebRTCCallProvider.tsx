@@ -68,28 +68,53 @@ export const WebRTCCallProvider: React.FC<{ children: React.ReactNode }> = ({
       if (isConnected) return;
 
       const socket = socketRef.current;
-      peerManagerRef.current = new GroupPeerManager(socket);
-      mediaRef.current = new MediaDevice();
+      const media = new MediaDevice();
+      mediaRef.current = media;
 
       console.log("[joinCall] Requesting audio stream...");
-      const stream = await mediaRef.current.start("audio");
+      const stream = await media.start("audio");
       localStreamRef.current = stream;
 
-      console.log("[joinCall] Stream acquired", stream);
-      console.log("[joinCall] Audio tracks: ", stream.getAudioTracks());
+      const tracks = stream.getAudioTracks();
+      if (tracks.length === 0) {
+        throw new Error("No audio tracks available in local stream");
+      }
 
-      const label = mediaRef.current.getSelectedMicLabel();
-      setMicLabel(label);
-      console.log("[joinCall] Media device in use ->", label);
+      const track = tracks[0];
+      console.log("🎙️ Local mic track info:", {
+        label: track.label,
+        enabled: track.enabled,
+        muted: track.muted,
+        readyState: track.readyState,
+      });
 
-      const response = await peerManagerRef.current.joinRoom(stream);
+      console.log("[joinCall] Stream acquired:", stream);
+
+      // Optional: loopback playback for testing
+      // const audio = document.createElement("audio");
+      // audio.srcObject = stream;
+      // audio.autoplay = true;
+      // audio.controls = true;
+      // audio.volume = 1;
+      // document.body.appendChild(audio);
+
+      const micLabel = media.getSelectedMicLabel();
+      setMicLabel(micLabel);
+      console.log("[joinCall] Mic in use:", micLabel);
+
+      // Setup PeerManager and join the mediasoup room
+      const peerManager = new GroupPeerManager(socket);
+      peerManagerRef.current = peerManager;
+
+      const response = await peerManager.joinRoom(stream);
       console.log("[joinCall] Joined room successfully:", response);
 
       setConnected(true);
     } catch (err) {
-      console.error("[joinCall] Error while starting call", err);
+      console.error("[joinCall] Error while starting call:", err);
     }
   };
+
 
   const leaveCall = () => {
     console.log("[leaveCall] Cleaning up call...");

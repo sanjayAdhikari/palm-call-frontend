@@ -140,13 +140,11 @@ export enum SocketEventEnum {
   CONNECT_TRANSPORT = "connect-transport",
 
   PRODUCE = "produce",
-  PRODUCED = "produced",
 
   CREATE_RECV_TRANSPORT = "create-recv-transport",
   CONNECT_RECV_TRANSPORT = "connect-recv-transport",
 
   CONSUME = "consume",
-  CONSUMED = "consumed",
 
   // Call session management
   CALL_START = "call:start",

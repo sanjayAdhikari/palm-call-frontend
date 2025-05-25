@@ -75,12 +75,11 @@ export default class GroupPeerManager {
         dtlsParameters: recvData.dtlsParameters,
       });
 
-      let recvConnected = false;
-      this.recvTransport.on("connect", ({ dtlsParameters }, callback) => {
-        if (recvConnected) return;
-        recvConnected = true;
+      this.recvTransport.on("connect", ({ dtlsParameters }, callback, errback) => {
         this.socket.emit(SocketEventEnum.CONNECT_RECV_TRANSPORT, { dtlsParameters });
-        this.socket.once(SocketEventEnum.CREATE_RECV_TRANSPORT, callback);
+
+        this.socket.once(SocketEventEnum.CONNECT_RECV_TRANSPORT, callback); // ✅ correct signal
+        this.socket.once(SocketEventEnum.ERROR, errback); // optional
       });
 
 
@@ -90,8 +89,7 @@ export default class GroupPeerManager {
       });
 
       this.socket.off(SocketEventEnum.CONSUME); // remove old
-      this.socket.on(
-        SocketEventEnum.CONSUME,
+      this.socket.on(SocketEventEnum.CONSUME,
         async ({ id, producerId, kind, rtpParameters }) => {
           console.log("[Client] Received consumed event:", producerId);
           if (!this.recvTransport) return;
@@ -100,12 +98,20 @@ export default class GroupPeerManager {
             console.warn("🔁 Already consuming producer:", producerId);
             return;
           }
-          const consumer = await this.recvTransport.consume({
+
+          console.log("📥 Received remote consumer:", {
             id,
             producerId,
             kind,
             rtpParameters,
           });
+
+          const consumer = await this.recvTransport.consume({ id, producerId, kind, rtpParameters });
+
+
+          console.log("🎧 consumer.track:", consumer.track);
+          console.log("🎧 consumer.track.readyState:", consumer.track.readyState);
+          console.log("🎧 consumer.track.enabled:", consumer.track.enabled);
 
           const stream = new MediaStream([consumer.track]);
           this.remoteStreams.set(producerId, stream);
